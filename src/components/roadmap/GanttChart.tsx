@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Project } from '@/pages/Roadmap';
@@ -68,6 +69,22 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
     if (completion === 100) return 'text-white';
     if (status === 'delayed') return 'text-white';
     return 'text-gray-800';
+  };
+
+  const formatPlannedPeriod = (startQuarter: string, endQuarter: string) => {
+    // Q1-2025 formatından Q1 çıkar
+    const formatQuarter = (quarter: string) => {
+      if (quarter === '2024') return '2024';
+      return quarter.replace('-2025', '');
+    };
+    
+    const start = formatQuarter(startQuarter);
+    const end = formatQuarter(endQuarter);
+    
+    if (start === end) {
+      return `Planlanan:${start}`;
+    }
+    return `Planlanan:${start}-${end}`;
   };
 
   // Get all projects including subprojects for the chart
@@ -148,7 +165,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
                       title={`Plan: ${project.plannedStartQuarter} - ${project.plannedEndQuarter}`}
                     >
                       <span className="text-gray-700 text-xs font-medium">
-                        Plan
+                        {formatPlannedPeriod(project.plannedStartQuarter, project.plannedEndQuarter)}
                       </span>
                     </div>
                     
