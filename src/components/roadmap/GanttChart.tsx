@@ -1,7 +1,7 @@
-
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Project } from '@/pages/Roadmap';
+import { getPhaseColor } from '@/utils/projectPhases';
 
 interface GanttChartProps {
   projects: Project[];
@@ -58,8 +58,9 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
   const getStatusColor = (status: string, completion: number) => {
     if (completion === 100) return 'bg-green-500';
     if (status === 'delayed') return 'bg-red-500';
-    if (status === 'in-progress') return 'bg-blue-500';
-    return 'bg-gray-400';
+    
+    // Proje fazına göre renk belirleme
+    return getPhaseColor(completion);
   };
 
   // Get all projects including subprojects for the chart

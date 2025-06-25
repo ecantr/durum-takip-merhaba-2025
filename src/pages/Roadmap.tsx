@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { Plus, Upload } from 'lucide-react';
 import ProjectForm from '@/components/roadmap/ProjectForm';
 import GanttChart from '@/components/roadmap/GanttChart';
 import ProjectList from '@/components/roadmap/ProjectList';
+import ProjectPhaseInfo from '@/components/roadmap/ProjectPhaseInfo';
 import { convertRoadmapData } from '@/utils/dataImport';
 
 export interface Project {
@@ -124,16 +124,19 @@ const Roadmap = () => {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-1">
-          <ProjectList
-            projects={projects}
-            onEdit={handleEditProject}
-            onDelete={handleDeleteProject}
-            onAddSubProject={handleAddSubProject}
-          />
+          <div className="space-y-4">
+            <ProjectPhaseInfo />
+            <ProjectList
+              projects={projects}
+              onEdit={handleEditProject}
+              onDelete={handleDeleteProject}
+              onAddSubProject={handleAddSubProject}
+            />
+          </div>
         </div>
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-3">
           <GanttChart projects={projects} />
         </div>
       </div>
