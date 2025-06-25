@@ -20,7 +20,7 @@ export interface Project {
   completionPercentage: number;
   category: string;
   responsible: string;
-  status: 'not-started' | 'in-progress' | 'completed' | 'delayed' | 'ongoing';
+  status: 'not-started' | 'in-progress' | 'completed' | 'delayed';
   subProjects?: Project[]; // Alt projeler
   isSubProject?: boolean; // Alt proje mi?
   parentId?: string; // Ana proje ID'si
@@ -87,71 +87,58 @@ const Roadmap = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              2025 Proje Roadmap
-            </h1>
-            <p className="text-gray-600 text-lg">
-              Projelerinizi takip edin ve Gantt chart ile görselleştirin
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <Button 
-              onClick={handleLoadSampleData} 
-              variant="outline" 
-              className="flex items-center gap-2"
-            >
-              <Upload className="w-4 h-4" />
-              Örnek Veri Yükle
-            </Button>
-            <Button 
-              onClick={() => setShowForm(true)} 
-              className="flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Yeni Proje
-            </Button>
-          </div>
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">2025 Proje Roadmap</h1>
+          <p className="text-muted-foreground">Projelerinizi takip edin ve Gantt chart ile görselleştirin</p>
         </div>
+        <div className="flex gap-2">
+          <Button onClick={handleLoadSampleData} variant="outline" className="flex items-center gap-2">
+            <Upload className="w-4 h-4" />
+            Örnek Veri Yükle
+          </Button>
+          <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            Yeni Proje
+          </Button>
+        </div>
+      </div>
 
-        {showForm && (
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {editingProject ? 'Proje Düzenle' : 'Yeni Proje Ekle'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ProjectForm
-                project={editingProject}
-                onSubmit={editingProject ? handleUpdateProject : handleAddProject}
-                onCancel={() => {
-                  setShowForm(false);
-                  setEditingProject(null);
-                }}
-              />
-            </CardContent>
-          </Card>
-        )}
+      {showForm && (
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              {editingProject ? 'Proje Düzenle' : 'Yeni Proje Ekle'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ProjectForm
+              project={editingProject}
+              onSubmit={editingProject ? handleUpdateProject : handleAddProject}
+              onCancel={() => {
+                setShowForm(false);
+                setEditingProject(null);
+              }}
+            />
+          </CardContent>
+        </Card>
+      )}
 
-        <div className="space-y-6">
-          <ProjectPhaseInfo />
-          
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-1">
-              <ProjectList
-                projects={projects}
-                onEdit={handleEditProject}
-                onDelete={handleDeleteProject}
-                onAddSubProject={handleAddSubProject}
-              />
-            </div>
-            <div className="lg:col-span-3">
-              <GanttChart projects={projects} />
-            </div>
+      <div className="space-y-4">
+        <ProjectPhaseInfo />
+        
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-1">
+            <ProjectList
+              projects={projects}
+              onEdit={handleEditProject}
+              onDelete={handleDeleteProject}
+              onAddSubProject={handleAddSubProject}
+            />
+          </div>
+          <div className="lg:col-span-3">
+            <GanttChart projects={projects} />
           </div>
         </div>
       </div>

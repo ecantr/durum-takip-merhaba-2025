@@ -7,17 +7,17 @@ import { PROJECT_PHASES } from '@/utils/projectPhases';
 const ProjectPhaseInfo: React.FC = () => {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Proje Süreç Aralıkları</CardTitle>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg">Proje Süreç Aralıkları</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-wrap gap-3">
+      <CardContent className="pt-0">
+        <div className="flex flex-wrap gap-2">
           {PROJECT_PHASES.map((phase) => (
-            <div key={phase.id} className="flex items-center gap-2 text-sm">
+            <div key={phase.id} className="flex items-center gap-2 text-xs">
               <Badge className={`${phase.bgColor} text-white`}>
                 %{phase.minPercentage}-{phase.maxPercentage}
               </Badge>
-              <span className="text-gray-600">{phase.name}</span>
+              <span className="text-muted-foreground">{phase.name}</span>
             </div>
           ))}
         </div>

@@ -32,9 +32,9 @@ const ProjectList: React.FC<ProjectListProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed': return 'bg-emerald-500 hover:bg-emerald-600';
-      case 'in-progress': return 'bg-osmanli-teal hover:bg-osmanli-teal-dark';
+      case 'in-progress': return 'bg-blue-500 hover:bg-blue-600';
       case 'delayed': return 'bg-red-500 hover:bg-red-600';
-      default: return 'bg-gray-500 hover:bg-gray-600';
+      default: return 'bg-slate-500 hover:bg-slate-600';
     }
   };
 
@@ -50,16 +50,16 @@ const ProjectList: React.FC<ProjectListProps> = ({
   const mainProjects = projects.filter(p => !p.isSubProject);
 
   return (
-    <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="pb-4 bg-gradient-to-r from-osmanli-teal to-osmanli-teal-light text-white">
-        <CardTitle className="text-lg font-poppins font-semibold">
+    <Card className="shadow-sm">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg font-semibold text-gray-800">
           Projeler ({projects.length})
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4">
+      <CardContent>
         {mainProjects.length === 0 ? (
-          <div className="text-center py-8 text-osmanli-text-muted">
-            <div className="text-base font-medium mb-2 text-osmanli-text-dark">Henüz proje eklenmemiş</div>
+          <div className="text-center py-8 text-gray-500">
+            <div className="text-base font-medium mb-1">Henüz proje eklenmemiş</div>
             <div className="text-sm">Yeni proje eklemek için yukarıdaki butonu kullanın</div>
           </div>
         ) : (
@@ -69,55 +69,55 @@ const ProjectList: React.FC<ProjectListProps> = ({
               const hasSubProjects = project.subProjects && project.subProjects.length > 0;
               
               return (
-                <div key={project.id} className="border border-gray-200 rounded-lg bg-white hover:shadow-md transition-all duration-200">
+                <div key={project.id} className="border border-gray-200 rounded-lg bg-white hover:shadow-sm transition-shadow">
                   <div className="p-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-3">
+                        <div className="flex items-center gap-2 mb-2">
                           {hasSubProjects && (
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => toggleExpanded(project.id)}
-                              className="p-1 h-6 w-6 hover:bg-osmanli-bg-light rounded-md"
+                              className="p-1 h-6 w-6 hover:bg-gray-100 rounded-md"
                             >
                               {isExpanded ? (
-                                <ChevronDown className="h-3 w-3 text-osmanli-teal" />
+                                <ChevronDown className="h-3 w-3 text-gray-600" />
                               ) : (
-                                <ChevronRight className="h-3 w-3 text-osmanli-teal" />
+                                <ChevronRight className="h-3 w-3 text-gray-600" />
                               )}
                             </Button>
                           )}
-                          <h4 className="font-poppins font-semibold text-base text-osmanli-text-dark">
+                          <h4 className="font-medium text-base text-gray-900">
                             {project.name}
                           </h4>
                         </div>
                         
                         <div className="flex items-center gap-2 mb-3">
-                          <Badge variant="outline" className="text-xs px-2 py-1 bg-osmanli-teal/10 text-osmanli-teal border-osmanli-teal/30 font-medium">
+                          <Badge variant="outline" className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 border-blue-200">
                             %{project.completionPercentage}
                           </Badge>
-                          <Badge className={`${getStatusColor(project.status)} text-white text-xs px-2 py-1 font-medium`}>
+                          <Badge className={`${getStatusColor(project.status)} text-white text-xs px-2 py-0.5`}>
                             {getStatusText(project.status)}
                           </Badge>
                         </div>
                         
-                        <div className="space-y-2 text-sm">
-                          <div className="flex items-center">
-                            <span className="font-medium text-osmanli-text-dark w-16">Kategori:</span>
-                            <span className="text-osmanli-text-muted">{project.category}</span>
+                        <div className="space-y-1 text-sm text-gray-600">
+                          <div>
+                            <span className="font-medium text-gray-700">Kategori:</span>
+                            <span className="ml-1">{project.category}</span>
                           </div>
-                          <div className="flex items-center">
-                            <span className="font-medium text-osmanli-text-dark w-16">Sorumlu:</span>
-                            <span className="text-osmanli-text-muted">{project.responsible}</span>
+                          <div>
+                            <span className="font-medium text-gray-700">Sorumlu:</span>
+                            <span className="ml-1">{project.responsible}</span>
                           </div>
-                          <div className="flex items-center">
-                            <span className="font-medium text-osmanli-text-dark w-16">Plan:</span>
-                            <span className="text-osmanli-text-muted">{project.plannedStartQuarter} - {project.plannedEndQuarter}</span>
+                          <div>
+                            <span className="font-medium text-gray-700">Plan:</span>
+                            <span className="ml-1">{project.plannedStartQuarter} - {project.plannedEndQuarter}</span>
                           </div>
-                          <div className="flex items-center">
-                            <span className="font-medium text-osmanli-text-dark w-16">Gerçek:</span>
-                            <span className="text-osmanli-text-muted">{project.actualStartQuarter} - {project.actualEndQuarter}</span>
+                          <div>
+                            <span className="font-medium text-gray-700">Gerçek:</span>
+                            <span className="ml-1">{project.actualStartQuarter} - {project.actualEndQuarter}</span>
                           </div>
                         </div>
                       </div>
@@ -127,7 +127,7 @@ const ProjectList: React.FC<ProjectListProps> = ({
                           variant="ghost"
                           size="sm"
                           onClick={() => onEdit(project)}
-                          className="h-8 w-8 p-0 hover:bg-osmanli-teal/10 hover:text-osmanli-teal rounded-md transition-colors"
+                          className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-700 rounded-md"
                           title="Düzenle"
                         >
                           <Edit className="h-4 w-4" />
@@ -136,7 +136,7 @@ const ProjectList: React.FC<ProjectListProps> = ({
                           variant="ghost"
                           size="sm"
                           onClick={() => onDelete(project.id)}
-                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
+                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md"
                           title="Sil"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -159,7 +159,7 @@ const ProjectList: React.FC<ProjectListProps> = ({
                             };
                             onAddSubProject(project.id, subProject);
                           }}
-                          className="h-8 w-8 p-0 hover:bg-green-50 hover:text-green-700 rounded-md transition-colors"
+                          className="h-8 w-8 p-0 hover:bg-green-50 hover:text-green-700 rounded-md"
                           title="Alt Proje Ekle"
                         >
                           <Plus className="h-4 w-4" />
@@ -169,17 +169,17 @@ const ProjectList: React.FC<ProjectListProps> = ({
 
                     {/* Alt projeler */}
                     {hasSubProjects && isExpanded && (
-                      <div className="mt-4 ml-6 border-l-2 border-osmanli-teal/30 pl-4 space-y-3">
+                      <div className="mt-3 ml-6 border-l-2 border-gray-200 pl-3 space-y-2">
                         {project.subProjects!.map((subProject) => (
-                          <div key={subProject.id} className="border border-gray-100 rounded-md p-3 bg-osmanli-bg-light/50">
+                          <div key={subProject.id} className="border border-gray-100 rounded-md p-3 bg-gray-50/50">
                             <div className="flex items-start justify-between">
                               <div className="flex-1 min-w-0">
-                                <h5 className="font-poppins font-medium text-sm text-osmanli-text-dark mb-2">
+                                <h5 className="font-medium text-sm text-gray-800 mb-2">
                                   {subProject.name}
                                 </h5>
                                 
                                 <div className="flex items-center gap-2 mb-2">
-                                  <Badge variant="outline" className="text-xs px-2 py-0.5 bg-osmanli-teal/10 text-osmanli-teal border-osmanli-teal/30">
+                                  <Badge variant="outline" className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 border-blue-200">
                                     %{subProject.completionPercentage}
                                   </Badge>
                                   <Badge className={`${getStatusColor(subProject.status)} text-white text-xs px-2 py-0.5`}>
@@ -187,14 +187,14 @@ const ProjectList: React.FC<ProjectListProps> = ({
                                   </Badge>
                                 </div>
                                 
-                                <div className="space-y-1 text-xs">
-                                  <div className="flex items-center">
-                                    <span className="font-medium text-osmanli-text-dark w-14">Sorumlu:</span>
-                                    <span className="text-osmanli-text-muted">{subProject.responsible}</span>
+                                <div className="space-y-1 text-xs text-gray-600">
+                                  <div>
+                                    <span className="font-medium text-gray-700">Sorumlu:</span>
+                                    <span className="ml-1">{subProject.responsible}</span>
                                   </div>
-                                  <div className="flex items-center">
-                                    <span className="font-medium text-osmanli-text-dark w-14">Plan:</span>
-                                    <span className="text-osmanli-text-muted">{subProject.plannedStartQuarter} - {subProject.plannedEndQuarter}</span>
+                                  <div>
+                                    <span className="font-medium text-gray-700">Plan:</span>
+                                    <span className="ml-1">{subProject.plannedStartQuarter} - {subProject.plannedEndQuarter}</span>
                                   </div>
                                 </div>
                               </div>
@@ -204,7 +204,7 @@ const ProjectList: React.FC<ProjectListProps> = ({
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => onEdit(subProject)}
-                                  className="h-7 w-7 p-0 hover:bg-osmanli-teal/10 hover:text-osmanli-teal rounded-md"
+                                  className="h-7 w-7 p-0 hover:bg-blue-50 hover:text-blue-700 rounded-md"
                                   title="Düzenle"
                                 >
                                   <Edit className="h-3 w-3" />

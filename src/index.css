@@ -1,10 +1,6 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import Google Fonts - Professional typography matching Osmanlı Yatırım */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
 
@@ -19,9 +15,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* Osmanlı Yatırım inspired color palette */
-    --primary: 157 44% 38%; /* Teal green from the website */
-    --primary-foreground: 0 0% 100%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -29,34 +24,33 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 157 44% 38%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 157 44% 38%;
+    --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
 
-    /* Custom Osmanlı Yatırım colors */
-    --osmanli-teal: 157 44% 38%;
-    --osmanli-teal-light: 157 44% 45%;
-    --osmanli-teal-dark: 157 44% 30%;
-    --osmanli-bg-light: 220 13% 96%;
-    --osmanli-text-dark: 222 47% 11%;
-    --osmanli-text-muted: 215 16% 47%;
-
     --sidebar-background: 0 0% 98%;
+
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 157 44% 38%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
     --sidebar-primary-foreground: 0 0% 98%;
+
     --sidebar-accent: 240 4.8% 95.9%;
+
     --sidebar-accent-foreground: 240 5.9% 10%;
+
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 157 44% 38%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -69,7 +63,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 157 44% 45%;
+    --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -78,7 +72,7 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 157 44% 45%;
+    --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -86,15 +80,15 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 157 44% 45%;
+    --ring: 212.7 26.8% 83.9%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 157 44% 45%;
+    --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 157 44% 45%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -105,65 +99,5 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  }
-
-  /* Professional typography matching Osmanlı Yatırım */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-weight: 600;
-    line-height: 1.2;
-    letter-spacing: -0.025em;
-  }
-
-  h1 {
-    @apply text-3xl font-bold;
-    color: hsl(var(--osmanli-text-dark));
-  }
-
-  h2 {
-    @apply text-2xl font-semibold;
-    color: hsl(var(--osmanli-text-dark));
-  }
-
-  h3, h4 {
-    @apply text-lg font-medium;
-    color: hsl(var(--osmanli-text-dark));
-  }
-
-  p, span, div {
-    line-height: 1.6;
-    color: hsl(var(--osmanli-text-muted));
-  }
-}
-
-/* Custom utility classes for Osmanlı Yatırım theme */
-@layer utilities {
-  .text-osmanli-teal {
-    color: hsl(var(--osmanli-teal));
-  }
-
-  .bg-osmanli-teal {
-    background-color: hsl(var(--osmanli-teal));
-  }
-
-  .bg-osmanli-teal-light {
-    background-color: hsl(var(--osmanli-teal-light));
-  }
-
-  .bg-osmanli-teal-dark {
-    background-color: hsl(var(--osmanli-teal-dark));
-  }
-
-  .border-osmanli-teal {
-    border-color: hsl(var(--osmanli-teal));
-  }
-
-  .hover\:bg-osmanli-teal-light:hover {
-    background-color: hsl(var(--osmanli-teal-light));
-  }
-
-  .hover\:bg-osmanli-teal-dark:hover {
-    background-color: hsl(var(--osmanli-teal-dark));
   }
 }
