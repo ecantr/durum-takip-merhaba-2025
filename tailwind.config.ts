@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,6 +19,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'inter': ['Inter', 'sans-serif'],
+				'poppins': ['Poppins', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -51,6 +56,19 @@ export default {
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
+				},
+				// Osmanlı Yatırım custom colors
+				'osmanli-teal': {
+					DEFAULT: 'hsl(var(--osmanli-teal))',
+					light: 'hsl(var(--osmanli-teal-light))',
+					dark: 'hsl(var(--osmanli-teal-dark))',
+				},
+				'osmanli-bg': {
+					light: 'hsl(var(--osmanli-bg-light))',
+				},
+				'osmanli-text': {
+					dark: 'hsl(var(--osmanli-text-dark))',
+					muted: 'hsl(var(--osmanli-text-muted))',
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',

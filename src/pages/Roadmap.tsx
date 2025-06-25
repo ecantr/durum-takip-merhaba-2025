@@ -87,58 +87,71 @@ const Roadmap = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">2025 Proje Roadmap</h1>
-          <p className="text-muted-foreground">Projelerinizi takip edin ve Gantt chart ile görselleştirin</p>
-        </div>
-        <div className="flex gap-2">
-          <Button onClick={handleLoadSampleData} variant="outline" className="flex items-center gap-2">
-            <Upload className="w-4 h-4" />
-            Örnek Veri Yükle
-          </Button>
-          <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
-            <Plus className="w-4 h-4" />
-            Yeni Proje
-          </Button>
-        </div>
-      </div>
-
-      {showForm && (
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              {editingProject ? 'Proje Düzenle' : 'Yeni Proje Ekle'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ProjectForm
-              project={editingProject}
-              onSubmit={editingProject ? handleUpdateProject : handleAddProject}
-              onCancel={() => {
-                setShowForm(false);
-                setEditingProject(null);
-              }}
-            />
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="space-y-4">
-        <ProjectPhaseInfo />
-        
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:col-span-1">
-            <ProjectList
-              projects={projects}
-              onEdit={handleEditProject}
-              onDelete={handleDeleteProject}
-              onAddSubProject={handleAddSubProject}
-            />
+    <div className="min-h-screen bg-osmanli-bg-light">
+      <div className="container mx-auto p-6 space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold font-poppins text-osmanli-text-dark mb-2">
+              2025 Proje Roadmap
+            </h1>
+            <p className="text-osmanli-text-muted text-lg font-inter">
+              Projelerinizi takip edin ve Gantt chart ile görselleştirin
+            </p>
           </div>
-          <div className="lg:col-span-3">
-            <GanttChart projects={projects} />
+          <div className="flex gap-3">
+            <Button 
+              onClick={handleLoadSampleData} 
+              variant="outline" 
+              className="flex items-center gap-2 border-osmanli-teal text-osmanli-teal hover:bg-osmanli-teal hover:text-white transition-colors font-medium"
+            >
+              <Upload className="w-4 h-4" />
+              Örnek Veri Yükle
+            </Button>
+            <Button 
+              onClick={() => setShowForm(true)} 
+              className="flex items-center gap-2 bg-osmanli-teal hover:bg-osmanli-teal-dark text-white font-medium shadow-lg"
+            >
+              <Plus className="w-4 h-4" />
+              Yeni Proje
+            </Button>
+          </div>
+        </div>
+
+        {showForm && (
+          <Card className="shadow-lg border-0 bg-white">
+            <CardHeader className="bg-gradient-to-r from-osmanli-teal to-osmanli-teal-light text-white">
+              <CardTitle className="font-poppins text-xl">
+                {editingProject ? 'Proje Düzenle' : 'Yeni Proje Ekle'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <ProjectForm
+                project={editingProject}
+                onSubmit={editingProject ? handleUpdateProject : handleAddProject}
+                onCancel={() => {
+                  setShowForm(false);
+                  setEditingProject(null);
+                }}
+              />
+            </CardContent>
+          </Card>
+        )}
+
+        <div className="space-y-6">
+          <ProjectPhaseInfo />
+          
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-1">
+              <ProjectList
+                projects={projects}
+                onEdit={handleEditProject}
+                onDelete={handleDeleteProject}
+                onAddSubProject={handleAddSubProject}
+              />
+            </div>
+            <div className="lg:col-span-3">
+              <GanttChart projects={projects} />
+            </div>
           </div>
         </div>
       </div>

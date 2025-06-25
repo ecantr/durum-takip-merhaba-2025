@@ -6,18 +6,18 @@ import { PROJECT_PHASES } from '@/utils/projectPhases';
 
 const ProjectPhaseInfo: React.FC = () => {
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Proje Süreç Aralıkları</CardTitle>
+    <Card className="shadow-lg border-0 bg-white">
+      <CardHeader className="pb-4 bg-gradient-to-r from-osmanli-teal to-osmanli-teal-light text-white">
+        <CardTitle className="text-lg font-poppins font-semibold">Proje Süreç Aralıkları</CardTitle>
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="flex flex-wrap gap-2">
+      <CardContent className="pt-4">
+        <div className="flex flex-wrap gap-3">
           {PROJECT_PHASES.map((phase) => (
-            <div key={phase.id} className="flex items-center gap-2 text-xs">
-              <Badge className={`${phase.bgColor} text-white`}>
+            <div key={phase.id} className="flex items-center gap-2 text-sm">
+              <Badge className={`${phase.bgColor} text-white font-medium px-3 py-1`}>
                 %{phase.minPercentage}-{phase.maxPercentage}
               </Badge>
-              <span className="text-muted-foreground">{phase.name}</span>
+              <span className="text-osmanli-text-muted font-inter">{phase.name}</span>
             </div>
           ))}
         </div>

@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Project } from '@/pages/Roadmap';
@@ -56,8 +57,9 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
   };
 
   const getStatusColor = (status: string, completion: number) => {
-    if (completion === 100) return 'bg-green-500';
+    if (completion === 100) return 'bg-emerald-500';
     if (status === 'delayed') return 'bg-red-500';
+    if (status === 'in-progress') return 'bg-osmanli-teal';
     
     // Proje fazına göre renk belirleme
     return getPhaseColor(completion);
@@ -78,28 +80,30 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
   }, [projects]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Card className="shadow-lg border-0 bg-white">
+      <CardHeader className="bg-gradient-to-r from-osmanli-teal to-osmanli-teal-light text-white">
+        <CardTitle className="font-poppins font-semibold">
           Gantt Chart (2024-2025 Roadmap)
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4">
         {allProjects.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            Projeler eklendikçe Gantt chart burada görünecek
+          <div className="text-center py-8 text-osmanli-text-muted">
+            <div className="font-medium text-osmanli-text-dark mb-2">
+              Projeler eklendikçe Gantt chart burada görünecek
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
             {/* Timeline header */}
-            <div className="flex border-b pb-2">
-              <div className="w-48 font-medium">Proje</div>
+            <div className="flex border-b-2 border-osmanli-teal/20 pb-3">
+              <div className="w-48 font-poppins font-semibold text-osmanli-text-dark">Proje</div>
               <div className="flex-1 relative">
                 <div className="flex">
                   {chartData.timeperiods.map((period) => (
                     <div 
                       key={period.value}
-                      className="flex-1 text-xs text-center border-l border-gray-200 px-1"
+                      className="flex-1 text-xs text-center border-l border-gray-200 px-1 font-medium text-osmanli-text-dark"
                     >
                       {period.label}
                     </div>
@@ -113,20 +117,20 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
               const plannedPosition = getProjectPosition(project);
               const actualPosition = getActualProjectPosition(project);
               return (
-                <div key={project.id} className="flex items-center py-2 hover:bg-gray-50">
+                <div key={project.id} className="flex items-center py-3 hover:bg-osmanli-bg-light/50 rounded-lg transition-colors">
                   <div className="w-48 pr-4">
-                    <div className={`font-medium text-sm ${project.isSubProject ? 'pl-4 text-gray-600' : ''}`}>
+                    <div className={`font-poppins font-medium text-sm ${project.isSubProject ? 'pl-4 text-osmanli-text-muted' : 'text-osmanli-text-dark'}`}>
                       {project.isSubProject && '└ '}
                       {project.name}
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-osmanli-teal font-medium">
                       %{project.completionPercentage}
                     </div>
                   </div>
                   <div className="flex-1 relative h-12">
                     {/* Planned timeline (lighter background) */}
                     <div 
-                      className="absolute h-4 rounded bg-gray-300 opacity-60 top-0"
+                      className="absolute h-4 rounded-md bg-gray-300 opacity-60 top-0"
                       style={{
                         left: `${plannedPosition.left}%`,
                         width: `${plannedPosition.width}%`,
@@ -136,7 +140,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
                     
                     {/* Actual timeline */}
                     <div 
-                      className={`absolute h-4 rounded ${getStatusColor(project.status, project.completionPercentage)} opacity-80 flex items-center justify-center top-6`}
+                      className={`absolute h-4 rounded-md ${getStatusColor(project.status, project.completionPercentage)} opacity-90 flex items-center justify-center top-6 shadow-sm`}
                       style={{
                         left: `${actualPosition.left}%`,
                         width: `${actualPosition.width}%`,
@@ -151,7 +155,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
                     {/* Progress overlay */}
                     {project.completionPercentage > 0 && project.completionPercentage < 100 && (
                       <div 
-                        className="absolute h-4 rounded bg-green-500 opacity-60 top-6"
+                        className="absolute h-4 rounded-md bg-emerald-500 opacity-70 top-6"
                         style={{
                           left: `${actualPosition.left}%`,
                           width: `${(actualPosition.width * project.completionPercentage) / 100}%`,
