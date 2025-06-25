@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,26 +8,9 @@ import GanttChart from '@/components/roadmap/GanttChart';
 import ProjectList from '@/components/roadmap/ProjectList';
 import ProjectPhaseInfo from '@/components/roadmap/ProjectPhaseInfo';
 import { convertRoadmapData } from '@/utils/dataImport';
-import { saveProjectsToStorage, loadProjectsFromStorage, clearProjectsFromStorage, checkStorageStatus } from '@/utils/localStorage';
 import { useToast } from '@/hooks/use-toast';
 import CSVImport from '@/components/roadmap/CSVImport';
-
-export interface Project {
-  id: string;
-  name: string;
-  plannedStartQuarter: string; // Q1, Q2, Q3, Q4
-  plannedEndQuarter: string;
-  actualStartQuarter: string; // Q1, Q2, Q3, Q4
-  actualEndQuarter: string;
-  year: number;
-  completionPercentage: number;
-  category: string;
-  responsible: string;
-  status: 'not-started' | 'in-progress' | 'completed' | 'delayed' | 'continuous';
-  subProjects?: Project[]; // Alt projeler
-  isSubProject?: boolean; // Alt proje mi?
-  parentId?: string; // Ana proje ID'si
-}
+import { projectService, type Project } from '@/services/projectService';
 
 const Roadmap = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -36,57 +20,48 @@ const Roadmap = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  // Sayfa yüklendiğinde localStorage'dan projeleri yükle
+  // Sayfa yüklendiğinde projeleri getir
   useEffect(() => {
-    console.log('Roadmap bileşeni yüklendi, localStorage\'dan veri çekiliyor...');
-    checkStorageStatus(); // Debug için durum kontrolü
-    
-    const savedProjects = loadProjectsFromStorage();
-    console.log('Yüklenen projeler:', savedProjects);
-    
-    if (savedProjects.length > 0) {
-      setProjects(savedProjects);
-      console.log('Projeler state\'e yüklendi:', savedProjects.length);
-    } else {
-      console.log('Yüklenecek proje bulunamadı');
-    }
-    
-    setIsLoading(false);
+    loadProjects();
   }, []);
 
-  // Projeler değiştiğinde localStorage'a kaydet
-  useEffect(() => {
-    if (!isLoading && projects.length > 0) {
-      console.log('Projeler değişti, localStorage\'a kaydediliyor:', projects.length);
-      saveProjectsToStorage(projects);
+  const loadProjects = async () => {
+    try {
+      setIsLoading(true);
+      console.log('Projeler Supabase\'den yükleniyor...');
+      const loadedProjects = await projectService.getAllProjects();
+      console.log('Yüklenen projeler:', loadedProjects.length);
+      setProjects(loadedProjects);
+    } catch (error) {
+      console.error('Projeler yüklenirken hata:', error);
+      toast({
+        title: "Hata",
+        description: "Projeler yüklenirken bir hata oluştu",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
-  }, [projects, isLoading]);
+  };
 
-  // Sayfa kapatılmadan önce kaydet
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      if (projects.length > 0) {
-        console.log('Sayfa kapatılıyor, projeler kaydediliyor...');
-        saveProjectsToStorage(projects);
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [projects]);
-
-  const handleAddProject = (project: Omit<Project, 'id'>) => {
-    const newProject: Project = {
-      ...project,
-      id: Date.now().toString(),
-    };
-    console.log('Yeni proje ekleniyor:', newProject.name);
-    setProjects([...projects, newProject]);
-    setShowForm(false);
-    toast({
-      title: "Başarılı",
-      description: "Proje başarıyla eklendi",
-    });
+  const handleAddProject = async (project: Omit<Project, 'id'>) => {
+    try {
+      console.log('Yeni proje ekleniyor:', project.name);
+      const newProject = await projectService.createProject(project);
+      setProjects(prev => [...prev, newProject]);
+      setShowForm(false);
+      toast({
+        title: "Başarılı",
+        description: "Proje başarıyla eklendi",
+      });
+    } catch (error) {
+      console.error('Proje eklenirken hata:', error);
+      toast({
+        title: "Hata",
+        description: "Proje eklenirken bir hata oluştu",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleEditProject = (project: Project) => {
@@ -94,90 +69,136 @@ const Roadmap = () => {
     setShowForm(true);
   };
 
-  const handleUpdateProject = (updatedProject: Omit<Project, 'id'>) => {
-    if (editingProject) {
-      setProjects(projects.map(p => 
-        p.id === editingProject.id 
-          ? { ...updatedProject, id: editingProject.id }
-          : p
-      ));
+  const handleUpdateProject = async (updatedProject: Omit<Project, 'id'>) => {
+    if (!editingProject) return;
+
+    try {
+      console.log('Proje güncelleniyor:', editingProject.id);
+      const updated = await projectService.updateProject(editingProject.id, updatedProject);
+      setProjects(prev => prev.map(p => p.id === editingProject.id ? updated : p));
       setEditingProject(null);
       setShowForm(false);
       toast({
         title: "Başarılı",
         description: "Proje başarıyla güncellendi",
       });
+    } catch (error) {
+      console.error('Proje güncellenirken hata:', error);
+      toast({
+        title: "Hata",
+        description: "Proje güncellenirken bir hata oluştu",
+        variant: "destructive",
+      });
     }
   };
 
-  const handleDeleteProject = (projectId: string) => {
-    setProjects(projects.filter(p => p.id !== projectId));
-    toast({
-      title: "Başarılı",
-      description: "Proje başarıyla silindi",
-    });
+  const handleDeleteProject = async (projectId: string) => {
+    try {
+      console.log('Proje siliniyor:', projectId);
+      await projectService.deleteProject(projectId);
+      setProjects(prev => prev.filter(p => p.id !== projectId));
+      toast({
+        title: "Başarılı",
+        description: "Proje başarıyla silindi",
+      });
+    } catch (error) {
+      console.error('Proje silinirken hata:', error);
+      toast({
+        title: "Hata",
+        description: "Proje silinirken bir hata oluştu",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleAddSubProject = (parentId: string, subProject: Omit<Project, 'id'>) => {
-    const newSubProject: Project = {
-      ...subProject,
-      id: Date.now().toString(),
-      isSubProject: true,
-      parentId: parentId,
-    };
+  const handleAddSubProject = async (parentId: string, subProject: Omit<Project, 'id'>) => {
+    try {
+      const newSubProject = {
+        ...subProject,
+        isSubProject: true,
+        parentId: parentId,
+      };
 
-    setProjects(prevProjects => 
-      prevProjects.map(project => 
-        project.id === parentId 
-          ? {
-              ...project,
-              subProjects: [...(project.subProjects || []), newSubProject]
-            }
-          : project
-      )
-    );
-    toast({
-      title: "Başarılı",
-      description: "Alt proje başarıyla eklendi",
-    });
+      console.log('Alt proje ekleniyor:', newSubProject.name);
+      await projectService.createProject(newSubProject);
+      
+      // Projeleri yeniden yükle
+      await loadProjects();
+      
+      toast({
+        title: "Başarılı",
+        description: "Alt proje başarıyla eklendi",
+      });
+    } catch (error) {
+      console.error('Alt proje eklenirken hata:', error);
+      toast({
+        title: "Hata",
+        description: "Alt proje eklenirken bir hata oluştu",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleLoadSampleData = () => {
-    const sampleProjects = convertRoadmapData();
-    setProjects(sampleProjects);
-    toast({
-      title: "Başarılı",
-      description: `${sampleProjects.length} proje başarıyla yüklendi`,
-    });
+  const handleLoadSampleData = async () => {
+    try {
+      const sampleProjects = convertRoadmapData();
+      console.log('Örnek veriler ekleniyor:', sampleProjects.length);
+      await projectService.createMultipleProjects(sampleProjects);
+      await loadProjects();
+      toast({
+        title: "Başarılı",
+        description: `${sampleProjects.length} proje başarıyla yüklendi`,
+      });
+    } catch (error) {
+      console.error('Örnek veriler yüklenirken hata:', error);
+      toast({
+        title: "Hata",
+        description: "Örnek veriler yüklenirken bir hata oluştu",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleClearAllData = () => {
-    setProjects([]);
-    clearProjectsFromStorage();
-    toast({
-      title: "Başarılı",
-      description: "Tüm projeler temizlendi",
-    });
+  const handleClearAllData = async () => {
+    try {
+      console.log('Tüm projeler siliniyor...');
+      // Tüm projeleri sil
+      for (const project of projects) {
+        await projectService.deleteProject(project.id);
+      }
+      setProjects([]);
+      toast({
+        title: "Başarılı",
+        description: "Tüm projeler temizlendi",
+      });
+    } catch (error) {
+      console.error('Projeler silinirken hata:', error);
+      toast({
+        title: "Hata",
+        description: "Projeler silinirken bir hata oluştu",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleCSVImport = (importedProjects: Project[]) => {
-    console.log('CSV\'den projeler içe aktarılıyor:', importedProjects.length);
-    setProjects(prevProjects => [...prevProjects, ...importedProjects]);
-    setShowCSVImport(false);
-    toast({
-      title: "Başarılı",
-      description: `${importedProjects.length} proje başarıyla içe aktarıldı`,
-    });
-  };
-
-  // Manual save fonksiyonu - test amaçlı
-  const handleManualSave = () => {
-    saveProjectsToStorage(projects);
-    checkStorageStatus();
-    toast({
-      title: "Kayıt Tamamlandı",
-      description: `${projects.length} proje localStorage'a kaydedildi`,
-    });
+  const handleCSVImport = async (importedProjects: Project[]) => {
+    try {
+      console.log('CSV\'den projeler içe aktarılıyor:', importedProjects.length);
+      await projectService.createMultipleProjects(importedProjects);
+      await loadProjects();
+      setShowCSVImport(false);
+      toast({
+        title: "Başarılı",
+        description: `${importedProjects.length} proje başarıyla içe aktarıldı`,
+      });
+    } catch (error) {
+      console.error('CSV import hatası:', error);
+      toast({
+        title: "Hata",
+        description: "Projeler içe aktarılırken bir hata oluştu",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) {
@@ -203,13 +224,6 @@ const Roadmap = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button 
-            onClick={handleManualSave} 
-            variant="outline" 
-            className="flex items-center gap-2 bg-green-50 text-green-700 hover:bg-green-100"
-          >
-            💾 Manuel Kaydet
-          </Button>
           {projects.length > 0 && (
             <Button 
               onClick={handleClearAllData} 
