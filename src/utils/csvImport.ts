@@ -14,6 +14,7 @@ export const parseCSVData = (csvText: string): ImportResult => {
   const errors: string[] = [];
   const projects: Project[] = [];
   let successfulRows = 0;
+  let currentParentProject: Project | null = null;
 
   // İlk satırı header olarak atla (eğer varsa)
   const dataLines = lines.filter(line => line.trim() !== '');
@@ -23,20 +24,36 @@ export const parseCSVData = (csvText: string): ImportResult => {
       // Tab veya virgül ile ayrılmış değerleri parse et
       const columns = line.split('\t').length > 1 ? line.split('\t') : line.split(',');
       
-      if (columns.length < 6) {
-        errors.push(`Satır ${index + 1}: Yetersiz veri (en az 6 sütun gerekli)`);
+      if (columns.length < 2) {
+        errors.push(`Satır ${index + 1}: Yetersiz veri (en az 2 sütun gerekli)`);
         return;
+      }
+
+      // İlk kolonu kontrol et - numara varsa ana proje, yoksa alt proje
+      const firstColumn = columns[0].trim();
+      const isMainProject = /^\d+$/.test(firstColumn); // Sadece rakam varsa ana proje
+      
+      let projectData: string[];
+      let projectNumber: string | null = null;
+
+      if (isMainProject) {
+        // Ana proje - ilk kolon numara, ikinci kolon proje adı
+        projectNumber = firstColumn;
+        projectData = columns.slice(1); // İlk kolonu (numarayı) çıkar
+      } else {
+        // Alt proje - ilk kolon proje adı (boş olabilir)
+        projectData = columns;
       }
 
       const [
         name,
-        plannedStart,
-        plannedEnd,
-        actualStart,
-        actualEnd,
-        responsible,
-        completionStr
-      ] = columns.map(col => col.trim());
+        plannedStart = '',
+        plannedEnd = '',
+        actualStart = '',
+        actualEnd = '',
+        responsible = '',
+        completionStr = ''
+      ] = projectData.map(col => col.trim());
 
       // Proje adı boşsa atla
       if (!name || name === '') {
@@ -90,9 +107,10 @@ export const parseCSVData = (csvText: string): ImportResult => {
         return 'Genel';
       };
 
+      const projectId = `import-${Date.now()}-${index}`;
       const project: Project = {
-        id: `import-${Date.now()}-${index}`,
-        name: name,
+        id: projectId,
+        name: projectNumber ? `${projectNumber}. ${name}` : name,
         plannedStartQuarter: normalizeDate(plannedStart),
         plannedEndQuarter: normalizeDate(plannedEnd),
         actualStartQuarter: normalizeDate(actualStart),
@@ -104,7 +122,24 @@ export const parseCSVData = (csvText: string): ImportResult => {
         status: getStatus(completionPercentage)
       };
 
-      projects.push(project);
+      if (isMainProject) {
+        // Ana proje
+        project.subProjects = [];
+        projects.push(project);
+        currentParentProject = project;
+      } else {
+        // Alt proje
+        if (currentParentProject) {
+          project.isSubProject = true;
+          project.parentId = currentParentProject.id;
+          currentParentProject.subProjects = currentParentProject.subProjects || [];
+          currentParentProject.subProjects.push(project);
+        } else {
+          // Ana proje yoksa bağımsız proje olarak ekle
+          projects.push(project);
+        }
+      }
+
       successfulRows++;
 
     } catch (error) {

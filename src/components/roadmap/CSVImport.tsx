@@ -52,10 +52,13 @@ const CSVImport: React.FC<CSVImportProps> = ({ onImport, onClose }) => {
     }
   };
 
-  const sampleData = `Tezgahüstü Ödünç Sistemi	Q1	Q3	Q1	Q4	Merve Nur Öztürk - Emre Can Tuncer	20%
-Osmanlı Şifre faz2		Q1-Q2-Q3-Q4	2024	Q3	Merve Nur Öztürk	80%
-FAZ-1 Birinci Grup			2024	Q1	Merve Nur Öztürk - Ürün Geliştirme	100%
-Optimus 	Q1-Q2-Q3-Q4				Merve Nur Öztürk	100%`;
+  const sampleData = `1	Tezgahüstü Ödünç Sistemi	Q1	Q3	Q1	Q4	Merve Nur Öztürk - Emre Can Tuncer	20%
+16	Osmanlı Mobil						
+	Osmanlı Şifre faz2		Q1-Q2-Q3-Q4	2024	Q3	Merve Nur Öztürk	80%
+	Görüntülü Hesap Aç Osmanlı Mobil Entegrasyonu	2024 Devam ediyor	Q1	2024	Q3	Merve Nur Öztürk	80%
+17	Zorunlu dokümanlar						
+	FAZ-1 Birinci Grup			2024	Q1	Merve Nur Öztürk - Ürün Geliştirme	100%
+	FAZ-1 İkinci Grup			2024	Q1	Merve Nur Öztürk - Ürün Geliştirme	100%`;
 
   return (
     <Card className="w-full max-w-4xl">
@@ -65,7 +68,8 @@ Optimus 	Q1-Q2-Q3-Q4				Merve Nur Öztürk	100%`;
           Toplu Proje İthalat
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Proje verilerinizi tab veya virgül ile ayrılmış format halinde yapıştırın
+          Proje verilerinizi tab veya virgül ile ayrılmış format halinde yapıştırın. 
+          Satır başında numara olan projeler ana proje, numarasız olanlar alt proje olarak içe aktarılır.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -84,13 +88,16 @@ Optimus 	Q1-Q2-Q3-Q4				Merve Nur Öztürk	100%`;
           </div>
           <Textarea
             placeholder="Proje verilerinizi buraya yapıştırın... 
-Format: Proje Adı [TAB] Planlanan Başlangıç [TAB] Planlanan Bitiş [TAB] Gerçek Başlangıç [TAB] Gerçek Bitiş [TAB] Sorumlu [TAB] Tamamlanma %"
+Format: [Numara] Proje Adı [TAB] Planlanan Başlangıç [TAB] Planlanan Bitiş [TAB] Gerçek Başlangıç [TAB] Gerçek Bitiş [TAB] Sorumlu [TAB] Tamamlanma %
+
+Not: Satır başında numara olan projeler ana proje, numara olmayan projeler alt proje olarak içe aktarılır."
             value={csvText}
             onChange={(e) => setCsvText(e.target.value)}
             className="min-h-[200px] font-mono text-sm"
           />
           <p className="text-xs text-muted-foreground mt-1">
-            Kolon sırası: PLANAN BAŞLANGIÇ | PLANLANAN BİTİŞ | GERÇEKLEŞEN BAŞLANGIÇ | GERÇEKLEŞEN BİTİŞ | SORUMLU | TAMAMLAMA YÜZDESİ
+            <strong>Ana Projeler:</strong> Satır başında numara ile başlayan projeler<br />
+            <strong>Alt Projeler:</strong> Numarasız, ana projeyi takip eden projeler
           </p>
         </div>
 
