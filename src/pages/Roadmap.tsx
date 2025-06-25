@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import ProjectPhaseInfo from '@/components/roadmap/ProjectPhaseInfo';
 import { convertRoadmapData } from '@/utils/dataImport';
 import { saveProjectsToStorage, loadProjectsFromStorage, clearProjectsFromStorage } from '@/utils/localStorage';
 import { useToast } from '@/hooks/use-toast';
+import CSVImport from '@/components/roadmap/CSVImport';
 
 export interface Project {
   id: string;
@@ -31,6 +31,7 @@ export interface Project {
 const Roadmap = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [showCSVImport, setShowCSVImport] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const { toast } = useToast();
 
@@ -133,6 +134,15 @@ const Roadmap = () => {
     });
   };
 
+  const handleCSVImport = (importedProjects: Project[]) => {
+    setProjects(prevProjects => [...prevProjects, ...importedProjects]);
+    setShowCSVImport(false);
+    toast({
+      title: "Başarılı",
+      description: `${importedProjects.length} proje başarıyla içe aktarıldı`,
+    });
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -158,6 +168,14 @@ const Roadmap = () => {
               Tümünü Temizle
             </Button>
           )}
+          <Button 
+            onClick={() => setShowCSVImport(true)} 
+            variant="outline" 
+            className="flex items-center gap-2 text-green-600 hover:text-green-700"
+          >
+            <Upload className="w-4 h-4" />
+            Toplu İthalat
+          </Button>
           <Button onClick={handleLoadSampleData} variant="outline" className="flex items-center gap-2">
             <Upload className="w-4 h-4" />
             Örnek Veri Yükle (25 Proje)
@@ -168,6 +186,15 @@ const Roadmap = () => {
           </Button>
         </div>
       </div>
+
+      {showCSVImport && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <CSVImport
+            onImport={handleCSVImport}
+            onClose={() => setShowCSVImport(false)}
+          />
+        </div>
+      )}
 
       {showForm && (
         <Card>
