@@ -87,14 +87,14 @@ const Roadmap = () => {
   };
 
   return (
-    <div className="min-h-screen bg-osmanli-bg-light">
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-4xl font-bold font-poppins text-osmanli-text-dark mb-2">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
               2025 Proje Roadmap
             </h1>
-            <p className="text-osmanli-text-muted text-lg font-inter">
+            <p className="text-gray-600 text-lg">
               Projelerinizi takip edin ve Gantt chart ile görselleştirin
             </p>
           </div>
@@ -102,14 +102,14 @@ const Roadmap = () => {
             <Button 
               onClick={handleLoadSampleData} 
               variant="outline" 
-              className="flex items-center gap-2 border-osmanli-teal text-osmanli-teal hover:bg-osmanli-teal hover:text-white transition-colors font-medium"
+              className="flex items-center gap-2"
             >
               <Upload className="w-4 h-4" />
               Örnek Veri Yükle
             </Button>
             <Button 
               onClick={() => setShowForm(true)} 
-              className="flex items-center gap-2 bg-osmanli-teal hover:bg-osmanli-teal-dark text-white font-medium shadow-lg"
+              className="flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               Yeni Proje
@@ -118,13 +118,13 @@ const Roadmap = () => {
         </div>
 
         {showForm && (
-          <Card className="shadow-lg border-0 bg-white">
-            <CardHeader className="bg-gradient-to-r from-osmanli-teal to-osmanli-teal-light text-white">
-              <CardTitle className="font-poppins text-xl">
+          <Card>
+            <CardHeader>
+              <CardTitle>
                 {editingProject ? 'Proje Düzenle' : 'Yeni Proje Ekle'}
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent>
               <ProjectForm
                 project={editingProject}
                 onSubmit={editingProject ? handleUpdateProject : handleAddProject}
