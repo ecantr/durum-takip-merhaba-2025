@@ -20,7 +20,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
     completionPercentage: 0,
     category: '',
     responsible: '',
-    status: 'not-started' as const,
+    status: 'not-started' as 'not-started' | 'in-progress' | 'completed' | 'delayed',
   });
 
   useEffect(() => {
@@ -113,7 +113,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
         </div>
         <div>
           <Label htmlFor="status">Durum</Label>
-          <Select value={formData.status} onValueChange={(value: any) => setFormData({ ...formData, status: value })}>
+          <Select value={formData.status} onValueChange={(value: 'not-started' | 'in-progress' | 'completed' | 'delayed') => setFormData({ ...formData, status: value })}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>

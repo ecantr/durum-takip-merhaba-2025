@@ -2,10 +2,11 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Upload } from 'lucide-react';
 import ProjectForm from '@/components/roadmap/ProjectForm';
 import GanttChart from '@/components/roadmap/GanttChart';
 import ProjectList from '@/components/roadmap/ProjectList';
+import { convertRoadmapData } from '@/utils/dataImport';
 
 export interface Project {
   id: string;
@@ -53,6 +54,11 @@ const Roadmap = () => {
     setProjects(projects.filter(p => p.id !== projectId));
   };
 
+  const handleLoadSampleData = () => {
+    const sampleProjects = convertRoadmapData();
+    setProjects(sampleProjects);
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -60,10 +66,16 @@ const Roadmap = () => {
           <h1 className="text-3xl font-bold">2025 Proje Roadmap</h1>
           <p className="text-muted-foreground">Projelerinizi takip edin ve Gantt chart ile görselleştirin</p>
         </div>
-        <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          Yeni Proje
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={handleLoadSampleData} variant="outline" className="flex items-center gap-2">
+            <Upload className="w-4 h-4" />
+            Örnek Veri Yükle
+          </Button>
+          <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            Yeni Proje
+          </Button>
+        </div>
       </div>
 
       {showForm && (
