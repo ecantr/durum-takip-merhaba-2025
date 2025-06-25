@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -124,18 +125,21 @@ const Roadmap = () => {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div className="lg:col-span-1">
-          <ProjectList
-            projects={projects}
-            onEdit={handleEditProject}
-            onDelete={handleDeleteProject}
-            onAddSubProject={handleAddSubProject}
-          />
-        </div>
-        <div className="lg:col-span-3 space-y-4">
-          <ProjectPhaseInfo />
-          <GanttChart projects={projects} />
+      <div className="space-y-4">
+        <ProjectPhaseInfo />
+        
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-1">
+            <ProjectList
+              projects={projects}
+              onEdit={handleEditProject}
+              onDelete={handleDeleteProject}
+              onAddSubProject={handleAddSubProject}
+            />
+          </div>
+          <div className="lg:col-span-3">
+            <GanttChart projects={projects} />
+          </div>
         </div>
       </div>
     </div>
