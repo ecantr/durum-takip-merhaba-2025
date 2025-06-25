@@ -33,32 +33,35 @@ export const parseCSVData = (csvText: string): ImportResult => {
       const firstColumn = columns[0].trim();
       const isMainProject = /^\d+$/.test(firstColumn); // Sadece rakam varsa ana proje
       
-      let projectData: string[];
+      let projectName: string;
       let projectNumber: string | null = null;
+      let dataColumns: string[];
 
       if (isMainProject) {
         // Ana proje - ilk kolon numara, ikinci kolon proje adı
         projectNumber = firstColumn;
-        projectData = columns.slice(1); // İlk kolonu (numarayı) çıkar
+        projectName = columns[1].trim();
+        dataColumns = columns.slice(2); // İlk iki kolonu (numara ve isim) çıkar
       } else {
-        // Alt proje - ilk kolon proje adı (boş olabilir)
-        projectData = columns;
+        // Alt proje - ilk kolon boş veya proje adı
+        projectName = firstColumn || columns[1]?.trim() || '';
+        dataColumns = columns.slice(1); // İlk kolonu çıkar
       }
 
+      // Proje adı boşsa atla
+      if (!projectName || projectName === '') {
+        return;
+      }
+
+      // Veri kolonlarını parse et
       const [
-        name,
         plannedStart = '',
         plannedEnd = '',
         actualStart = '',
         actualEnd = '',
         responsible = '',
         completionStr = ''
-      ] = projectData.map(col => col.trim());
-
-      // Proje adı boşsa atla
-      if (!name || name === '') {
-        return;
-      }
+      ] = dataColumns.map(col => col?.trim() || '');
 
       // Tamamlanma yüzdesini parse et
       let completionPercentage = 0;
@@ -107,10 +110,10 @@ export const parseCSVData = (csvText: string): ImportResult => {
         return 'Genel';
       };
 
-      const projectId = `import-${Date.now()}-${index}`;
+      const projectId = `import-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const project: Project = {
         id: projectId,
-        name: projectNumber ? `${projectNumber}. ${name}` : name,
+        name: projectNumber ? `${projectNumber}. ${projectName}` : projectName,
         plannedStartQuarter: normalizeDate(plannedStart),
         plannedEndQuarter: normalizeDate(plannedEnd),
         actualStartQuarter: normalizeDate(actualStart),
@@ -127,6 +130,7 @@ export const parseCSVData = (csvText: string): ImportResult => {
         project.subProjects = [];
         projects.push(project);
         currentParentProject = project;
+        console.log(`Ana proje eklendi: ${project.name}`);
       } else {
         // Alt proje
         if (currentParentProject) {
@@ -134,9 +138,11 @@ export const parseCSVData = (csvText: string): ImportResult => {
           project.parentId = currentParentProject.id;
           currentParentProject.subProjects = currentParentProject.subProjects || [];
           currentParentProject.subProjects.push(project);
+          console.log(`Alt proje eklendi: ${project.name} -> ${currentParentProject.name}`);
         } else {
           // Ana proje yoksa bağımsız proje olarak ekle
           projects.push(project);
+          console.log(`Bağımsız proje eklendi: ${project.name}`);
         }
       }
 
