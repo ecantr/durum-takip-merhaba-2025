@@ -20,7 +20,7 @@ export interface Project {
   completionPercentage: number;
   category: string;
   responsible: string;
-  status: 'not-started' | 'in-progress' | 'completed' | 'delayed';
+  status: 'not-started' | 'in-progress' | 'completed' | 'delayed' | 'ongoing';
   subProjects?: Project[]; // Alt projeler
   isSubProject?: boolean; // Alt proje mi?
   parentId?: string; // Ana proje ID'si
