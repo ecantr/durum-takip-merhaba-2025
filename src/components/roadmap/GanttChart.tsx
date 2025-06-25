@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Project } from '@/pages/Roadmap';
@@ -63,6 +64,13 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
     return getPhaseColor(completion);
   };
 
+  const getTextColor = (status: string, completion: number) => {
+    // Daha iyi görünürlük için koyu renk kullan
+    if (completion === 100) return 'text-white';
+    if (status === 'delayed') return 'text-white';
+    return 'text-gray-800';
+  };
+
   // Get all projects including subprojects for the chart
   const allProjects = useMemo(() => {
     const result: Project[] = [];
@@ -126,24 +134,28 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
                   <div className="flex-1 relative h-12">
                     {/* Planned timeline (lighter background) */}
                     <div 
-                      className="absolute h-4 rounded bg-gray-300 opacity-60 top-0"
+                      className="absolute h-4 rounded bg-gray-300 opacity-60 top-0 flex items-center justify-center"
                       style={{
                         left: `${plannedPosition.left}%`,
                         width: `${plannedPosition.width}%`,
                       }}
                       title={`Plan: ${project.plannedStartQuarter} - ${project.plannedEndQuarter}`}
-                    />
+                    >
+                      <span className="text-gray-700 text-xs font-medium">
+                        Plan
+                      </span>
+                    </div>
                     
                     {/* Actual timeline */}
                     <div 
-                      className={`absolute h-4 rounded ${getStatusColor(project.status, project.completionPercentage)} opacity-80 flex items-center justify-center top-6`}
+                      className={`absolute h-4 rounded ${getStatusColor(project.status, project.completionPercentage)} opacity-90 flex items-center justify-center top-6`}
                       style={{
                         left: `${actualPosition.left}%`,
                         width: `${actualPosition.width}%`,
                       }}
                       title={`Gerçek: ${project.actualStartQuarter} - ${project.actualEndQuarter}`}
                     >
-                      <span className="text-white text-xs font-medium">
+                      <span className={`text-xs font-bold ${getTextColor(project.status, project.completionPercentage)}`}>
                         %{project.completionPercentage}
                       </span>
                     </div>
@@ -151,7 +163,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
                     {/* Progress overlay */}
                     {project.completionPercentage > 0 && project.completionPercentage < 100 && (
                       <div 
-                        className="absolute h-4 rounded bg-green-500 opacity-60 top-6"
+                        className="absolute h-4 rounded bg-green-600 opacity-70 top-6"
                         style={{
                           left: `${actualPosition.left}%`,
                           width: `${(actualPosition.width * project.completionPercentage) / 100}%`,
