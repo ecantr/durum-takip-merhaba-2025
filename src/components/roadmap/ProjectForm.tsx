@@ -15,8 +15,9 @@ interface ProjectFormProps {
 const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
     name: '',
-    startDate: '',
-    endDate: '',
+    startQuarter: 'Q1',
+    endQuarter: 'Q1',
+    year: 2025,
     completionPercentage: 0,
     category: '',
     responsible: '',
@@ -27,8 +28,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
     if (project) {
       setFormData({
         name: project.name,
-        startDate: project.startDate.toISOString().split('T')[0],
-        endDate: project.endDate.toISOString().split('T')[0],
+        startQuarter: project.startQuarter,
+        endQuarter: project.endQuarter,
+        year: project.year,
         completionPercentage: project.completionPercentage,
         category: project.category,
         responsible: project.responsible,
@@ -41,8 +43,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
     e.preventDefault();
     onSubmit({
       name: formData.name,
-      startDate: new Date(formData.startDate),
-      endDate: new Date(formData.endDate),
+      startQuarter: formData.startQuarter,
+      endQuarter: formData.endQuarter,
+      year: formData.year,
       completionPercentage: formData.completionPercentage,
       category: formData.category,
       responsible: formData.responsible,
@@ -72,24 +75,42 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
           />
         </div>
         <div>
-          <Label htmlFor="startDate">Başlangıç Tarihi</Label>
+          <Label htmlFor="year">Yıl</Label>
           <Input
-            id="startDate"
-            type="date"
-            value={formData.startDate}
-            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+            id="year"
+            type="number"
+            value={formData.year}
+            onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) || 2025 })}
             required
           />
         </div>
         <div>
-          <Label htmlFor="endDate">Bitiş Tarihi</Label>
-          <Input
-            id="endDate"
-            type="date"
-            value={formData.endDate}
-            onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-            required
-          />
+          <Label htmlFor="startQuarter">Başlangıç Çeyreği</Label>
+          <Select value={formData.startQuarter} onValueChange={(value) => setFormData({ ...formData, startQuarter: value })}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Q1">Q1</SelectItem>
+              <SelectItem value="Q2">Q2</SelectItem>
+              <SelectItem value="Q3">Q3</SelectItem>
+              <SelectItem value="Q4">Q4</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="endQuarter">Bitiş Çeyreği</Label>
+          <Select value={formData.endQuarter} onValueChange={(value) => setFormData({ ...formData, endQuarter: value })}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Q1">Q1</SelectItem>
+              <SelectItem value="Q2">Q2</SelectItem>
+              <SelectItem value="Q3">Q3</SelectItem>
+              <SelectItem value="Q4">Q4</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <Label htmlFor="responsible">Sorumlu</Label>

@@ -214,7 +214,7 @@ const ProjectList: React.FC<ProjectListProps> = ({
                       </div>
                       
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge className={getStatusColor(subProject.status)} size="sm">
+                        <Badge className={`${getStatusColor(subProject.status)} text-xs`}>
                           {getStatusText(subProject.status)}
                         </Badge>
                         <span className="text-xs font-medium">
