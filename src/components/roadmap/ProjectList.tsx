@@ -58,8 +58,10 @@ const ProjectList: React.FC<ProjectListProps> = ({
   const handleAddSubProject = (parentId: string) => {
     const subProject: Omit<Project, 'id'> = {
       name: 'Yeni Alt Proje',
-      startQuarter: 'Q1',
-      endQuarter: 'Q2',
+      plannedStartQuarter: 'Q1',
+      plannedEndQuarter: 'Q2',
+      actualStartQuarter: 'Q1',
+      actualEndQuarter: 'Q2',
       year: 2025,
       completionPercentage: 0,
       category: 'Alt Proje',
@@ -156,7 +158,10 @@ const ProjectList: React.FC<ProjectListProps> = ({
                 </div>
                 
                 <div className="text-xs text-muted-foreground">
-                  {project.year} {project.startQuarter} - {project.endQuarter}
+                  Plan: {project.year} {project.plannedStartQuarter} - {project.plannedEndQuarter}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Gerçek: {project.year} {project.actualStartQuarter} - {project.actualEndQuarter}
                 </div>
                 
                 {project.responsible && (
@@ -223,7 +228,10 @@ const ProjectList: React.FC<ProjectListProps> = ({
                       </div>
                       
                       <div className="text-xs text-muted-foreground mt-1">
-                        {subProject.year} {subProject.startQuarter} - {subProject.endQuarter}
+                        Plan: {subProject.year} {subProject.plannedStartQuarter} - {subProject.plannedEndQuarter}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Gerçek: {subProject.year} {subProject.actualStartQuarter} - {subProject.actualEndQuarter}
                       </div>
                       
                       {subProject.responsible && (

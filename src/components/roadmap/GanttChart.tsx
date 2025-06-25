@@ -41,8 +41,23 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
     const totalQuarters = chartData.quarters.length;
     if (totalQuarters === 0) return { left: 0, width: 0 };
 
-    const startIndex = getQuarterIndex(project.year, project.startQuarter);
-    const endIndex = getQuarterIndex(project.year, project.endQuarter);
+    const startIndex = getQuarterIndex(project.year, project.plannedStartQuarter);
+    const endIndex = getQuarterIndex(project.year, project.plannedEndQuarter);
+
+    if (startIndex === -1 || endIndex === -1) return { left: 0, width: 0 };
+
+    const left = (startIndex * 100) / totalQuarters;
+    const width = ((endIndex - startIndex + 1) * 100) / totalQuarters;
+
+    return { left, width };
+  };
+
+  const getActualProjectPosition = (project: Project) => {
+    const totalQuarters = chartData.quarters.length;
+    if (totalQuarters === 0) return { left: 0, width: 0 };
+
+    const startIndex = getQuarterIndex(project.year, project.actualStartQuarter);
+    const endIndex = getQuarterIndex(project.year, project.actualEndQuarter);
 
     if (startIndex === -1 || endIndex === -1) return { left: 0, width: 0 };
 
@@ -106,7 +121,8 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
 
             {/* Project rows */}
             {allProjects.map((project) => {
-              const position = getProjectPosition(project);
+              const plannedPosition = getProjectPosition(project);
+              const actualPosition = getActualProjectPosition(project);
               return (
                 <div key={project.id} className="flex items-center py-2 hover:bg-gray-50">
                   <div className="w-48 pr-4">
@@ -118,25 +134,38 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
                       %{project.completionPercentage}
                     </div>
                   </div>
-                  <div className="flex-1 relative h-8">
+                  <div className="flex-1 relative h-12">
+                    {/* Planned timeline (lighter background) */}
                     <div 
-                      className={`absolute h-6 rounded ${getStatusColor(project.status, project.completionPercentage)} opacity-80 flex items-center justify-center`}
+                      className="absolute h-4 rounded bg-gray-300 opacity-60 top-0"
                       style={{
-                        left: `${position.left}%`,
-                        width: `${position.width}%`,
+                        left: `${plannedPosition.left}%`,
+                        width: `${plannedPosition.width}%`,
                       }}
+                      title={`Plan: ${project.plannedStartQuarter} - ${project.plannedEndQuarter}`}
+                    />
+                    
+                    {/* Actual timeline */}
+                    <div 
+                      className={`absolute h-4 rounded ${getStatusColor(project.status, project.completionPercentage)} opacity-80 flex items-center justify-center top-6`}
+                      style={{
+                        left: `${actualPosition.left}%`,
+                        width: `${actualPosition.width}%`,
+                      }}
+                      title={`Gerçek: ${project.actualStartQuarter} - ${project.actualEndQuarter}`}
                     >
                       <span className="text-white text-xs font-medium">
                         %{project.completionPercentage}
                       </span>
                     </div>
+                    
                     {/* Progress overlay */}
                     {project.completionPercentage > 0 && project.completionPercentage < 100 && (
                       <div 
-                        className="absolute h-6 rounded bg-green-500 opacity-60"
+                        className="absolute h-4 rounded bg-green-500 opacity-60 top-6"
                         style={{
-                          left: `${position.left}%`,
-                          width: `${(position.width * project.completionPercentage) / 100}%`,
+                          left: `${actualPosition.left}%`,
+                          width: `${(actualPosition.width * project.completionPercentage) / 100}%`,
                         }}
                       />
                     )}

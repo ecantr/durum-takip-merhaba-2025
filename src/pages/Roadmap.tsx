@@ -11,8 +11,10 @@ import { convertRoadmapData } from '@/utils/dataImport';
 export interface Project {
   id: string;
   name: string;
-  startQuarter: string; // Q1, Q2, Q3, Q4
-  endQuarter: string;
+  plannedStartQuarter: string; // Q1, Q2, Q3, Q4
+  plannedEndQuarter: string;
+  actualStartQuarter: string; // Q1, Q2, Q3, Q4
+  actualEndQuarter: string;
   year: number;
   completionPercentage: number;
   category: string;

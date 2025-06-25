@@ -15,8 +15,10 @@ interface ProjectFormProps {
 const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
     name: '',
-    startQuarter: 'Q1',
-    endQuarter: 'Q1',
+    plannedStartQuarter: 'Q1',
+    plannedEndQuarter: 'Q1',
+    actualStartQuarter: 'Q1',
+    actualEndQuarter: 'Q1',
     year: 2025,
     completionPercentage: 0,
     category: '',
@@ -28,8 +30,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
     if (project) {
       setFormData({
         name: project.name,
-        startQuarter: project.startQuarter,
-        endQuarter: project.endQuarter,
+        plannedStartQuarter: project.plannedStartQuarter,
+        plannedEndQuarter: project.plannedEndQuarter,
+        actualStartQuarter: project.actualStartQuarter,
+        actualEndQuarter: project.actualEndQuarter,
         year: project.year,
         completionPercentage: project.completionPercentage,
         category: project.category,
@@ -43,8 +47,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
     e.preventDefault();
     onSubmit({
       name: formData.name,
-      startQuarter: formData.startQuarter,
-      endQuarter: formData.endQuarter,
+      plannedStartQuarter: formData.plannedStartQuarter,
+      plannedEndQuarter: formData.plannedEndQuarter,
+      actualStartQuarter: formData.actualStartQuarter,
+      actualEndQuarter: formData.actualEndQuarter,
       year: formData.year,
       completionPercentage: formData.completionPercentage,
       category: formData.category,
@@ -85,34 +91,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
           />
         </div>
         <div>
-          <Label htmlFor="startQuarter">Başlangıç Çeyreği</Label>
-          <Select value={formData.startQuarter} onValueChange={(value) => setFormData({ ...formData, startQuarter: value })}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Q1">Q1</SelectItem>
-              <SelectItem value="Q2">Q2</SelectItem>
-              <SelectItem value="Q3">Q3</SelectItem>
-              <SelectItem value="Q4">Q4</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label htmlFor="endQuarter">Bitiş Çeyreği</Label>
-          <Select value={formData.endQuarter} onValueChange={(value) => setFormData({ ...formData, endQuarter: value })}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Q1">Q1</SelectItem>
-              <SelectItem value="Q2">Q2</SelectItem>
-              <SelectItem value="Q3">Q3</SelectItem>
-              <SelectItem value="Q4">Q4</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
           <Label htmlFor="responsible">Sorumlu</Label>
           <Input
             id="responsible"
@@ -120,6 +98,62 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
             onChange={(e) => setFormData({ ...formData, responsible: e.target.value })}
             placeholder="Sorumlu kişi/ekip"
           />
+        </div>
+        <div>
+          <Label htmlFor="plannedStartQuarter">Planlanan Başlangıç Çeyreği</Label>
+          <Select value={formData.plannedStartQuarter} onValueChange={(value) => setFormData({ ...formData, plannedStartQuarter: value })}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Q1">Q1</SelectItem>
+              <SelectItem value="Q2">Q2</SelectItem>
+              <SelectItem value="Q3">Q3</SelectItem>
+              <SelectItem value="Q4">Q4</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="plannedEndQuarter">Planlanan Bitiş Çeyreği</Label>
+          <Select value={formData.plannedEndQuarter} onValueChange={(value) => setFormData({ ...formData, plannedEndQuarter: value })}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Q1">Q1</SelectItem>
+              <SelectItem value="Q2">Q2</SelectItem>
+              <SelectItem value="Q3">Q3</SelectItem>
+              <SelectItem value="Q4">Q4</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="actualStartQuarter">Gerçekleşen Başlangıç Çeyreği</Label>
+          <Select value={formData.actualStartQuarter} onValueChange={(value) => setFormData({ ...formData, actualStartQuarter: value })}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Q1">Q1</SelectItem>
+              <SelectItem value="Q2">Q2</SelectItem>
+              <SelectItem value="Q3">Q3</SelectItem>
+              <SelectItem value="Q4">Q4</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="actualEndQuarter">Gerçekleşen Bitiş Çeyreği</Label>
+          <Select value={formData.actualEndQuarter} onValueChange={(value) => setFormData({ ...formData, actualEndQuarter: value })}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Q1">Q1</SelectItem>
+              <SelectItem value="Q2">Q2</SelectItem>
+              <SelectItem value="Q3">Q3</SelectItem>
+              <SelectItem value="Q4">Q4</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <Label htmlFor="completion">Tamamlanma Oranı (%)</Label>

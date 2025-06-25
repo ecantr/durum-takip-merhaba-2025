@@ -7,8 +7,10 @@ export const convertRoadmapData = (): Project[] => {
     {
       name: "Tezgahüstü Ödünç Sistemi",
       year: 2025,
-      startQuarter: "Q1",
-      endQuarter: "Q3",
+      plannedStartQuarter: "Q1",
+      plannedEndQuarter: "Q3",
+      actualStartQuarter: "Q1",
+      actualEndQuarter: "Q3",
       responsible: "Merve Nur Öztürk - Emre Can Tuncer",
       completion: 75,
       category: "Sistem Geliştirme"
@@ -16,8 +18,10 @@ export const convertRoadmapData = (): Project[] => {
     {
       name: "Yabancı Hisse",
       year: 2025,
-      startQuarter: "Q1",
-      endQuarter: "Q2",
+      plannedStartQuarter: "Q1",
+      plannedEndQuarter: "Q2",
+      actualStartQuarter: "Q1",
+      actualEndQuarter: "Q2",
       responsible: "Dilruba Şentürk- Alp Demirezen - Ürün Geliştirme",
       completion: 15,
       category: "Ürün Geliştirme",
@@ -25,8 +29,10 @@ export const convertRoadmapData = (): Project[] => {
         {
           name: "Faz1",
           year: 2025,
-          startQuarter: "Q1",
-          endQuarter: "Q1",
+          plannedStartQuarter: "Q1",
+          plannedEndQuarter: "Q1",
+          actualStartQuarter: "Q1",
+          actualEndQuarter: "Q1",
           responsible: "Dilruba Şentürk",
           completion: 50,
           category: "Ürün Geliştirme"
@@ -34,18 +40,11 @@ export const convertRoadmapData = (): Project[] => {
         {
           name: "Faz2 (E-Şube Entegrasyonu)",
           year: 2025,
-          startQuarter: "Q1",
-          endQuarter: "Q2",
+          plannedStartQuarter: "Q1",
+          plannedEndQuarter: "Q2",
+          actualStartQuarter: "Q1",
+          actualEndQuarter: "Q2",
           responsible: "Alp Demirezen",
-          completion: 0,
-          category: "Ürün Geliştirme"
-        },
-        {
-          name: "Faz3 (3rd Part Entegrasyonları)",
-          year: 2025,
-          startQuarter: "Q2",
-          endQuarter: "Q2",
-          responsible: "Ürün Geliştirme",
           completion: 0,
           category: "Ürün Geliştirme"
         }
@@ -54,8 +53,10 @@ export const convertRoadmapData = (): Project[] => {
     {
       name: "AI",
       year: 2025,
-      startQuarter: "Q3",
-      endQuarter: "Q4",
+      plannedStartQuarter: "Q3",
+      plannedEndQuarter: "Q4",
+      actualStartQuarter: "Q3",
+      actualEndQuarter: "Q4",
       responsible: "Alp Demirezen",
       completion: 0,
       category: "Yapay Zeka"
@@ -63,17 +64,21 @@ export const convertRoadmapData = (): Project[] => {
     {
       name: "Açık Servisler Platformu",
       year: 2025,
-      startQuarter: "Q2",
-      endQuarter: "Q3",
+      plannedStartQuarter: "Q2",
+      plannedEndQuarter: "Q3",
+      actualStartQuarter: "Q2",
+      actualEndQuarter: "Q3",
       responsible: "Dilruba Şentürk - Merve Nur Öztürk",
       completion: 0,
       category: "Platform"
     },
     {
       name: "DWH",
-      year: 2024,
-      startQuarter: "Q3",
-      endQuarter: "Q2",
+      year: 2025,
+      plannedStartQuarter: "Q1",
+      plannedEndQuarter: "Q2",
+      actualStartQuarter: "Q1",
+      actualEndQuarter: "Q2",
       responsible: "Alp Demirezen-Emre Can Tuncer",
       completion: 70,
       category: "Veri Ambarı",
@@ -81,154 +86,13 @@ export const convertRoadmapData = (): Project[] => {
         {
           name: "Analytics Altyapısı",
           year: 2025,
-          startQuarter: "Q1",
-          endQuarter: "Q2",
+          plannedStartQuarter: "Q1",
+          plannedEndQuarter: "Q2",
+          actualStartQuarter: "Q1",
+          actualEndQuarter: "Q2",
           responsible: "Alp Demirezen",
           completion: 30,
           category: "Veri Ambarı"
-        },
-        {
-          name: "3rd party entegrasyonları",
-          year: 2025,
-          startQuarter: "Q2",
-          endQuarter: "Q2",
-          responsible: "Emre Can Tuncer",
-          completion: 0,
-          category: "Veri Ambarı"
-        }
-      ]
-    },
-    {
-      name: "CRM",
-      year: 2024,
-      startQuarter: "Q3",
-      endQuarter: "Q4",
-      responsible: "Dilruba Şentürk - Alp Demirezen",
-      completion: 75,
-      category: "CRM",
-      subProjects: [
-        {
-          name: "CRM Faz1",
-          year: 2024,
-          startQuarter: "Q3",
-          endQuarter: "Q4",
-          responsible: "Dilruba Şentürk - Alp Demirezen",
-          completion: 100,
-          category: "CRM"
-        },
-        {
-          name: "CRM Faz2",
-          year: 2025,
-          startQuarter: "Q1",
-          endQuarter: "Q2",
-          responsible: "Dilruba Şentürk - Alp Demirezen",
-          completion: 50,
-          category: "CRM"
-        },
-        {
-          name: "CRM Faz3",
-          year: 2025,
-          startQuarter: "Q3",
-          endQuarter: "Q4",
-          responsible: "Dilruba Şentürk - Alp Demirezen",
-          completion: 0,
-          category: "CRM"
-        }
-      ]
-    },
-    {
-      name: "ERP F&O",
-      year: 2025,
-      startQuarter: "Q1",
-      endQuarter: "Q4",
-      responsible: "Emre Can Tuncer",
-      completion: 85,
-      category: "ERP",
-      subProjects: [
-        {
-          name: "ERP F&O Faz1",
-          year: 2025,
-          startQuarter: "Q1",
-          endQuarter: "Q2",
-          responsible: "Emre Can Tuncer",
-          completion: 85,
-          category: "ERP"
-        },
-        {
-          name: "ERP F&O Faz2",
-          year: 2025,
-          startQuarter: "Q3",
-          endQuarter: "Q4",
-          responsible: "Emre Can Tuncer",
-          completion: 0,
-          category: "ERP"
-        }
-      ]
-    },
-    {
-      name: "ERP HRM",
-      year: 2025,
-      startQuarter: "Q2",
-      endQuarter: "Q4",
-      responsible: "Emre Can Tuncer",
-      completion: 70,
-      category: "ERP",
-      subProjects: [
-        {
-          name: "ERP HRM Faz2",
-          year: 2025,
-          startQuarter: "Q2",
-          endQuarter: "Q4",
-          responsible: "Emre Can Tuncer",
-          completion: 70,
-          category: "ERP"
-        }
-      ]
-    },
-    {
-      name: "Osmanlı Şifre",
-      year: 2025,
-      startQuarter: "Q1",
-      endQuarter: "Q4",
-      responsible: "Merve Nur Öztürk Ürün Geliştirme",
-      completion: 90,
-      category: "Güvenlik"
-    },
-    {
-      name: "OsmanlıTrader Web/Mobil",
-      year: 2025,
-      startQuarter: "Q1",
-      endQuarter: "Q4",
-      responsible: "Ürün Geliştirme",
-      completion: 100,
-      category: "Trading"
-    },
-    {
-      name: "Optimus Faz Geliştirme",
-      year: 2025,
-      startQuarter: "Q1",
-      endQuarter: "Q4",
-      responsible: "Merve Nur Öztürk",
-      completion: 100,
-      category: "Platform",
-      subProjects: [
-        {
-          name: "Faz Geliştirmeleri",
-          year: 2025,
-          startQuarter: "Q1",
-          endQuarter: "Q2",
-          responsible: "Merve Nur Öztürk",
-          completion: 100,
-          category: "Platform"
-        },
-        {
-          name: "Faz Dışı Geliştirmeler",
-          year: 2025,
-          startQuarter: "Q3",
-          endQuarter: "Q4",
-          responsible: "Merve Nur Öztürk",
-          completion: 100,
-          category: "Platform"
         }
       ]
     }
@@ -247,8 +111,10 @@ export const convertRoadmapData = (): Project[] => {
     const mainProject: Project = {
       id: (index + 1).toString(),
       name: item.name,
-      startQuarter: item.startQuarter,
-      endQuarter: item.endQuarter,
+      plannedStartQuarter: item.plannedStartQuarter,
+      plannedEndQuarter: item.plannedEndQuarter,
+      actualStartQuarter: item.actualStartQuarter,
+      actualEndQuarter: item.actualEndQuarter,
       year: item.year,
       completionPercentage: item.completion,
       category: item.category,
@@ -261,8 +127,10 @@ export const convertRoadmapData = (): Project[] => {
       mainProject.subProjects = item.subProjects.map((subItem, subIndex) => ({
         id: `${index + 1}-${subIndex + 1}`,
         name: subItem.name,
-        startQuarter: subItem.startQuarter,
-        endQuarter: subItem.endQuarter,
+        plannedStartQuarter: subItem.plannedStartQuarter,
+        plannedEndQuarter: subItem.plannedEndQuarter,
+        actualStartQuarter: subItem.actualStartQuarter,
+        actualEndQuarter: subItem.actualEndQuarter,
         year: subItem.year,
         completionPercentage: subItem.completion,
         category: subItem.category,
