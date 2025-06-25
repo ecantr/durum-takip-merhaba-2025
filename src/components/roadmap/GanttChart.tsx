@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Project } from '@/pages/Roadmap';
@@ -125,16 +124,16 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
                   <div className="w-48 pr-4">
                     <div className={`font-medium text-sm flex items-center ${project.isSubProject ? 'text-gray-600' : ''}`}>
                       {project.isSubProject && (
-                        <div className="flex items-center mr-2">
-                          <div className="w-4 h-px bg-gray-300 mr-1"></div>
-                          <div className="w-1 h-1 bg-gray-400 rounded-full mr-1"></div>
+                        <div className="flex items-center mr-3">
+                          <div className="w-6 h-0.5 bg-gray-500 mr-2"></div>
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
                         </div>
                       )}
-                      <span className={project.isSubProject ? 'ml-2' : ''}>
+                      <span className={project.isSubProject ? 'ml-1' : ''}>
                         {project.name}
                       </span>
                     </div>
-                    <div className={`text-xs text-muted-foreground ${project.isSubProject ? 'ml-8' : ''}`}>
+                    <div className={`text-xs text-muted-foreground ${project.isSubProject ? 'ml-12' : ''}`}>
                       %{project.completionPercentage}
                     </div>
                   </div>
