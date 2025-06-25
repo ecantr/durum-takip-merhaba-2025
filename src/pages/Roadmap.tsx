@@ -7,7 +7,7 @@ import GanttChart from '@/components/roadmap/GanttChart';
 import ProjectList from '@/components/roadmap/ProjectList';
 import ProjectPhaseInfo from '@/components/roadmap/ProjectPhaseInfo';
 import { convertRoadmapData } from '@/utils/dataImport';
-import { saveProjectsToStorage, loadProjectsFromStorage, clearProjectsFromStorage } from '@/utils/localStorage';
+import { saveProjectsToStorage, loadProjectsFromStorage, clearProjectsFromStorage, checkStorageStatus } from '@/utils/localStorage';
 import { useToast } from '@/hooks/use-toast';
 import CSVImport from '@/components/roadmap/CSVImport';
 
@@ -33,21 +33,46 @@ const Roadmap = () => {
   const [showForm, setShowForm] = useState(false);
   const [showCSVImport, setShowCSVImport] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   // Sayfa yüklendiğinde localStorage'dan projeleri yükle
   useEffect(() => {
+    console.log('Roadmap bileşeni yüklendi, localStorage\'dan veri çekiliyor...');
+    checkStorageStatus(); // Debug için durum kontrolü
+    
     const savedProjects = loadProjectsFromStorage();
+    console.log('Yüklenen projeler:', savedProjects);
+    
     if (savedProjects.length > 0) {
       setProjects(savedProjects);
+      console.log('Projeler state\'e yüklendi:', savedProjects.length);
+    } else {
+      console.log('Yüklenecek proje bulunamadı');
     }
+    
+    setIsLoading(false);
   }, []);
 
   // Projeler değiştiğinde localStorage'a kaydet
   useEffect(() => {
-    if (projects.length > 0) {
+    if (!isLoading && projects.length > 0) {
+      console.log('Projeler değişti, localStorage\'a kaydediliyor:', projects.length);
       saveProjectsToStorage(projects);
     }
+  }, [projects, isLoading]);
+
+  // Sayfa kapatılmadan önce kaydet
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (projects.length > 0) {
+        console.log('Sayfa kapatılıyor, projeler kaydediliyor...');
+        saveProjectsToStorage(projects);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [projects]);
 
   const handleAddProject = (project: Omit<Project, 'id'>) => {
@@ -55,6 +80,7 @@ const Roadmap = () => {
       ...project,
       id: Date.now().toString(),
     };
+    console.log('Yeni proje ekleniyor:', newProject.name);
     setProjects([...projects, newProject]);
     setShowForm(false);
     toast({
@@ -135,6 +161,7 @@ const Roadmap = () => {
   };
 
   const handleCSVImport = (importedProjects: Project[]) => {
+    console.log('CSV\'den projeler içe aktarılıyor:', importedProjects.length);
     setProjects(prevProjects => [...prevProjects, ...importedProjects]);
     setShowCSVImport(false);
     toast({
@@ -142,6 +169,24 @@ const Roadmap = () => {
       description: `${importedProjects.length} proje başarıyla içe aktarıldı`,
     });
   };
+
+  // Manual save fonksiyonu - test amaçlı
+  const handleManualSave = () => {
+    saveProjectsToStorage(projects);
+    checkStorageStatus();
+    toast({
+      title: "Kayıt Tamamlandı",
+      description: `${projects.length} proje localStorage'a kaydedildi`,
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-center">Projeler yükleniyor...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -158,6 +203,13 @@ const Roadmap = () => {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button 
+            onClick={handleManualSave} 
+            variant="outline" 
+            className="flex items-center gap-2 bg-green-50 text-green-700 hover:bg-green-100"
+          >
+            💾 Manuel Kaydet
+          </Button>
           {projects.length > 0 && (
             <Button 
               onClick={handleClearAllData} 
