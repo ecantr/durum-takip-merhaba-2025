@@ -15,11 +15,11 @@ interface ProjectFormProps {
 const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
     name: '',
-    plannedStartQuarter: 'Q1',
-    plannedEndQuarter: 'Q1',
-    actualStartQuarter: 'Q1',
-    actualEndQuarter: 'Q1',
-    year: 2025,
+    plannedStartQuarter: '2024',
+    plannedEndQuarter: 'Q1-2025',
+    actualStartQuarter: '2024',
+    actualEndQuarter: 'Q1-2025',
+    year: 2025, // Sabit değer olarak tutuyoruz
     completionPercentage: 0,
     category: '',
     responsible: '',
@@ -48,6 +48,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
     onSubmit(formData);
   };
 
+  const dateOptions = [
+    { value: '2024', label: '2024' },
+    { value: 'Q1-2025', label: '2025 Q1 (Ocak-Mart)' },
+    { value: 'Q2-2025', label: '2025 Q2 (Nisan-Haziran)' },
+    { value: 'Q3-2025', label: '2025 Q3 (Temmuz-Eylül)' },
+    { value: 'Q4-2025', label: '2025 Q4 (Ekim-Aralık)' },
+  ];
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -70,22 +78,23 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
           />
         </div>
         <div>
-          <Label htmlFor="year">Yıl</Label>
-          <Input
-            id="year"
-            type="number"
-            value={formData.year}
-            onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) || 2025 })}
-            required
-          />
-        </div>
-        <div>
           <Label htmlFor="responsible">Sorumlu</Label>
           <Input
             id="responsible"
             value={formData.responsible}
             onChange={(e) => setFormData({ ...formData, responsible: e.target.value })}
             placeholder="Sorumlu kişi/ekip"
+          />
+        </div>
+        <div>
+          <Label htmlFor="completion">Tamamlanma Oranı (%)</Label>
+          <Input
+            id="completion"
+            type="number"
+            min="0"
+            max="100"
+            value={formData.completionPercentage}
+            onChange={(e) => setFormData({ ...formData, completionPercentage: parseInt(e.target.value) || 0 })}
           />
         </div>
       </div>
@@ -104,10 +113,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Q1">Q1 (Ocak-Mart)</SelectItem>
-                <SelectItem value="Q2">Q2 (Nisan-Haziran)</SelectItem>
-                <SelectItem value="Q3">Q3 (Temmuz-Eylül)</SelectItem>
-                <SelectItem value="Q4">Q4 (Ekim-Aralık)</SelectItem>
+                {dateOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -121,10 +131,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Q1">Q1 (Ocak-Mart)</SelectItem>
-                <SelectItem value="Q2">Q2 (Nisan-Haziran)</SelectItem>
-                <SelectItem value="Q3">Q3 (Temmuz-Eylül)</SelectItem>
-                <SelectItem value="Q4">Q4 (Ekim-Aralık)</SelectItem>
+                {dateOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -138,10 +149,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Q1">Q1 (Ocak-Mart)</SelectItem>
-                <SelectItem value="Q2">Q2 (Nisan-Haziran)</SelectItem>
-                <SelectItem value="Q3">Q3 (Temmuz-Eylül)</SelectItem>
-                <SelectItem value="Q4">Q4 (Ekim-Aralık)</SelectItem>
+                {dateOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -155,43 +167,30 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Q1">Q1 (Ocak-Mart)</SelectItem>
-                <SelectItem value="Q2">Q2 (Nisan-Haziran)</SelectItem>
-                <SelectItem value="Q3">Q3 (Temmuz-Eylül)</SelectItem>
-                <SelectItem value="Q4">Q4 (Ekim-Aralık)</SelectItem>
+                {dateOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
         </div>
       </div>
 
-      {/* Diğer Bilgiler */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="completion">Tamamlanma Oranı (%)</Label>
-          <Input
-            id="completion"
-            type="number"
-            min="0"
-            max="100"
-            value={formData.completionPercentage}
-            onChange={(e) => setFormData({ ...formData, completionPercentage: parseInt(e.target.value) || 0 })}
-          />
-        </div>
-        <div>
-          <Label htmlFor="status">Durum</Label>
-          <Select value={formData.status} onValueChange={(value: 'not-started' | 'in-progress' | 'completed' | 'delayed') => setFormData({ ...formData, status: value })}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="not-started">Başlanmadı</SelectItem>
-              <SelectItem value="in-progress">Devam Ediyor</SelectItem>
-              <SelectItem value="completed">Tamamlandı</SelectItem>
-              <SelectItem value="delayed">Gecikmiş</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div>
+        <Label htmlFor="status">Durum</Label>
+        <Select value={formData.status} onValueChange={(value: 'not-started' | 'in-progress' | 'completed' | 'delayed') => setFormData({ ...formData, status: value })}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="not-started">Başlanmadı</SelectItem>
+            <SelectItem value="in-progress">Devam Ediyor</SelectItem>
+            <SelectItem value="completed">Tamamlandı</SelectItem>
+            <SelectItem value="delayed">Gecikmiş</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       
       <div className="flex gap-2 justify-end">

@@ -9,60 +9,48 @@ interface GanttChartProps {
 
 const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
   const chartData = useMemo(() => {
-    if (projects.length === 0) return { quarters: [], years: [] };
+    // Sabit zaman çizelgesi: 2024 (tek blok) + 2025 çeyrekleri
+    const timeperiods = [
+      { value: '2024', label: '2024', year: 2024 },
+      { value: 'Q1-2025', label: '2025 Q1', year: 2025 },
+      { value: 'Q2-2025', label: '2025 Q2', year: 2025 },
+      { value: 'Q3-2025', label: '2025 Q3', year: 2025 },
+      { value: 'Q4-2025', label: '2025 Q4', year: 2025 }
+    ];
 
-    // Get all main projects (not subprojects)
-    const mainProjects = projects.filter(p => !p.isSubProject);
-    
-    if (mainProjects.length === 0) return { quarters: [], years: [] };
+    return { timeperiods };
+  }, []);
 
-    // Find unique years
-    const years = [...new Set(mainProjects.map(p => p.year))].sort();
-    
-    // Generate quarters for each year
-    const quarters = [];
-    for (const year of years) {
-      quarters.push(
-        { year, quarter: 'Q1', label: `${year} Q1` },
-        { year, quarter: 'Q2', label: `${year} Q2` },
-        { year, quarter: 'Q3', label: `${year} Q3` },
-        { year, quarter: 'Q4', label: `${year} Q4` }
-      );
-    }
-
-    return { quarters, years };
-  }, [projects]);
-
-  const getQuarterIndex = (year: number, quarter: string) => {
-    return chartData.quarters.findIndex(q => q.year === year && q.quarter === quarter);
+  const getTimePeriodIndex = (period: string) => {
+    return chartData.timeperiods.findIndex(t => t.value === period);
   };
 
   const getProjectPosition = (project: Project) => {
-    const totalQuarters = chartData.quarters.length;
-    if (totalQuarters === 0) return { left: 0, width: 0 };
+    const totalPeriods = chartData.timeperiods.length;
+    if (totalPeriods === 0) return { left: 0, width: 0 };
 
-    const startIndex = getQuarterIndex(project.year, project.plannedStartQuarter);
-    const endIndex = getQuarterIndex(project.year, project.plannedEndQuarter);
+    const startIndex = getTimePeriodIndex(project.plannedStartQuarter);
+    const endIndex = getTimePeriodIndex(project.plannedEndQuarter);
 
     if (startIndex === -1 || endIndex === -1) return { left: 0, width: 0 };
 
-    const left = (startIndex * 100) / totalQuarters;
-    const width = ((endIndex - startIndex + 1) * 100) / totalQuarters;
+    const left = (startIndex * 100) / totalPeriods;
+    const width = ((endIndex - startIndex + 1) * 100) / totalPeriods;
 
     return { left, width };
   };
 
   const getActualProjectPosition = (project: Project) => {
-    const totalQuarters = chartData.quarters.length;
-    if (totalQuarters === 0) return { left: 0, width: 0 };
+    const totalPeriods = chartData.timeperiods.length;
+    if (totalPeriods === 0) return { left: 0, width: 0 };
 
-    const startIndex = getQuarterIndex(project.year, project.actualStartQuarter);
-    const endIndex = getQuarterIndex(project.year, project.actualEndQuarter);
+    const startIndex = getTimePeriodIndex(project.actualStartQuarter);
+    const endIndex = getTimePeriodIndex(project.actualEndQuarter);
 
     if (startIndex === -1 || endIndex === -1) return { left: 0, width: 0 };
 
-    const left = (startIndex * 100) / totalQuarters;
-    const width = ((endIndex - startIndex + 1) * 100) / totalQuarters;
+    const left = (startIndex * 100) / totalPeriods;
+    const width = ((endIndex - startIndex + 1) * 100) / totalPeriods;
 
     return { left, width };
   };
@@ -92,7 +80,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
     <Card>
       <CardHeader>
         <CardTitle>
-          Gantt Chart {chartData.years.length > 0 && `(${chartData.years.join(', ')})`}
+          Gantt Chart (2024-2025 Roadmap)
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -107,12 +95,12 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
               <div className="w-48 font-medium">Proje</div>
               <div className="flex-1 relative">
                 <div className="flex">
-                  {chartData.quarters.map((quarter, index) => (
+                  {chartData.timeperiods.map((period) => (
                     <div 
-                      key={`${quarter.year}-${quarter.quarter}`}
+                      key={period.value}
                       className="flex-1 text-xs text-center border-l border-gray-200 px-1"
                     >
-                      {quarter.label}
+                      {period.label}
                     </div>
                   ))}
                 </div>
