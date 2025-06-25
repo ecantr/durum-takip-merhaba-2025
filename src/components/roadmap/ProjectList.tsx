@@ -1,18 +1,42 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Plus, ChevronDown, ChevronRight } from 'lucide-react';
 import { Project } from '@/pages/Roadmap';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface ProjectListProps {
   projects: Project[];
   onEdit: (project: Project) => void;
   onDelete: (projectId: string) => void;
+  onAddSubProject: (parentId: string, subProject: Omit<Project, 'id'>) => void;
 }
 
-const ProjectList: React.FC<ProjectListProps> = ({ projects, onEdit, onDelete }) => {
+const ProjectList: React.FC<ProjectListProps> = ({ 
+  projects, 
+  onEdit, 
+  onDelete, 
+  onAddSubProject 
+}) => {
+  const [openProjects, setOpenProjects] = useState<Set<string>>(new Set());
+  const [showSubProjectForm, setShowSubProjectForm] = useState<string | null>(null);
+
+  const toggleProject = (projectId: string) => {
+    const newOpenProjects = new Set(openProjects);
+    if (newOpenProjects.has(projectId)) {
+      newOpenProjects.delete(projectId);
+    } else {
+      newOpenProjects.add(projectId);
+    }
+    setOpenProjects(newOpenProjects);
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed': return 'bg-green-500';
@@ -31,63 +55,187 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onEdit, onDelete })
     }
   };
 
+  const handleAddSubProject = (parentId: string) => {
+    const subProject: Omit<Project, 'id'> = {
+      name: 'Yeni Alt Proje',
+      startQuarter: 'Q1',
+      endQuarter: 'Q2',
+      year: 2025,
+      completionPercentage: 0,
+      category: 'Alt Proje',
+      responsible: '',
+      status: 'not-started',
+      isSubProject: true,
+      parentId: parentId
+    };
+    onAddSubProject(parentId, subProject);
+    setShowSubProjectForm(null);
+  };
+
+  // Ana projeleri filtrele (alt projeler hariç)
+  const mainProjects = projects.filter(p => !p.isSubProject);
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Projeler ({projects.length})</CardTitle>
+        <CardTitle>Projeler ({mainProjects.length})</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        {projects.length === 0 ? (
+        {mainProjects.length === 0 ? (
           <p className="text-muted-foreground text-center py-4">
             Henüz proje eklenmedi. Yeni proje eklemek için yukarıdaki butonu kullanın.
           </p>
         ) : (
-          projects.map((project) => (
-            <div key={project.id} className="border rounded-lg p-3 space-y-2">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h4 className="font-medium">{project.name}</h4>
-                  {project.category && (
-                    <p className="text-sm text-muted-foreground">{project.category}</p>
-                  )}
+          mainProjects.map((project) => (
+            <Collapsible
+              key={project.id}
+              open={openProjects.has(project.id)}
+              onOpenChange={() => toggleProject(project.id)}
+            >
+              <div className="border rounded-lg p-3 space-y-2">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1 flex items-center gap-2">
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="p-0 h-auto"
+                        disabled={!project.subProjects?.length}
+                      >
+                        {project.subProjects?.length ? (
+                          openProjects.has(project.id) ? (
+                            <ChevronDown className="w-4 h-4" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4" />
+                          )
+                        ) : (
+                          <div className="w-4 h-4" />
+                        )}
+                      </Button>
+                    </CollapsibleTrigger>
+                    <div>
+                      <h4 className="font-medium">{project.name}</h4>
+                      {project.category && (
+                        <p className="text-sm text-muted-foreground">{project.category}</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex gap-1">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setShowSubProjectForm(project.id)}
+                      title="Alt proje ekle"
+                    >
+                      <Plus className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => onEdit(project)}
+                    >
+                      <Edit className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => onDelete(project.id)}
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-1">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => onEdit(project)}
-                  >
-                    <Edit className="w-3 h-3" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => onDelete(project.id)}
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
+                
+                <div className="flex items-center gap-2">
+                  <Badge className={getStatusColor(project.status)}>
+                    {getStatusText(project.status)}
+                  </Badge>
+                  <span className="text-sm font-medium">
+                    %{project.completionPercentage}
+                  </span>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Badge className={getStatusColor(project.status)}>
-                  {getStatusText(project.status)}
-                </Badge>
-                <span className="text-sm font-medium">
-                  %{project.completionPercentage}
-                </span>
-              </div>
-              
-              <div className="text-xs text-muted-foreground">
-                {project.startDate.toLocaleDateString('tr-TR')} - {project.endDate.toLocaleDateString('tr-TR')}
-              </div>
-              
-              {project.responsible && (
+                
                 <div className="text-xs text-muted-foreground">
-                  Sorumlu: {project.responsible}
+                  {project.year} {project.startQuarter} - {project.endQuarter}
                 </div>
-              )}
-            </div>
+                
+                {project.responsible && (
+                  <div className="text-xs text-muted-foreground">
+                    Sorumlu: {project.responsible}
+                  </div>
+                )}
+
+                {showSubProjectForm === project.id && (
+                  <div className="border-t pt-2 mt-2">
+                    <div className="flex gap-2">
+                      <Button 
+                        size="sm" 
+                        onClick={() => handleAddSubProject(project.id)}
+                      >
+                        Alt Proje Ekle
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => setShowSubProjectForm(null)}
+                      >
+                        İptal
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                <CollapsibleContent className="space-y-2">
+                  {project.subProjects?.map((subProject) => (
+                    <div key={subProject.id} className="ml-6 border-l-2 border-gray-200 pl-3 py-2">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <h5 className="text-sm font-medium">{subProject.name}</h5>
+                          {subProject.category && (
+                            <p className="text-xs text-muted-foreground">{subProject.category}</p>
+                          )}
+                        </div>
+                        <div className="flex gap-1">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => onEdit(subProject)}
+                          >
+                            <Edit className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => onDelete(subProject.id)}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge className={getStatusColor(subProject.status)} size="sm">
+                          {getStatusText(subProject.status)}
+                        </Badge>
+                        <span className="text-xs font-medium">
+                          %{subProject.completionPercentage}
+                        </span>
+                      </div>
+                      
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {subProject.year} {subProject.startQuarter} - {subProject.endQuarter}
+                      </div>
+                      
+                      {subProject.responsible && (
+                        <div className="text-xs text-muted-foreground">
+                          Sorumlu: {subProject.responsible}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
           ))
         )}
       </CardContent>

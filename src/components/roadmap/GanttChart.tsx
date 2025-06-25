@@ -9,48 +9,45 @@ interface GanttChartProps {
 
 const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
   const chartData = useMemo(() => {
-    if (projects.length === 0) return { months: [], yearRange: '' };
+    if (projects.length === 0) return { quarters: [], years: [] };
 
-    // Find the earliest start date and latest end date
-    const allDates = projects.flatMap(p => [p.startDate, p.endDate]);
-    const minDate = new Date(Math.min(...allDates.map(d => d.getTime())));
-    const maxDate = new Date(Math.max(...allDates.map(d => d.getTime())));
+    // Get all main projects (not subprojects)
+    const mainProjects = projects.filter(p => !p.isSubProject);
+    
+    if (mainProjects.length === 0) return { quarters: [], years: [] };
 
-    // Generate months between min and max date
-    const months = [];
-    const current = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
-    const end = new Date(maxDate.getFullYear(), maxDate.getMonth() + 1, 0);
-
-    while (current <= end) {
-      months.push({
-        year: current.getFullYear(),
-        month: current.getMonth(),
-        name: current.toLocaleDateString('tr-TR', { month: 'short', year: 'numeric' })
-      });
-      current.setMonth(current.getMonth() + 1);
+    // Find unique years
+    const years = [...new Set(mainProjects.map(p => p.year))].sort();
+    
+    // Generate quarters for each year
+    const quarters = [];
+    for (const year of years) {
+      quarters.push(
+        { year, quarter: 'Q1', label: `${year} Q1` },
+        { year, quarter: 'Q2', label: `${year} Q2` },
+        { year, quarter: 'Q3', label: `${year} Q3` },
+        { year, quarter: 'Q4', label: `${year} Q4` }
+      );
     }
 
-    return {
-      months,
-      yearRange: `${minDate.getFullYear()} - ${maxDate.getFullYear()}`
-    };
+    return { quarters, years };
   }, [projects]);
 
+  const getQuarterIndex = (year: number, quarter: string) => {
+    return chartData.quarters.findIndex(q => q.year === year && q.quarter === quarter);
+  };
+
   const getProjectPosition = (project: Project) => {
-    const totalMonths = chartData.months.length;
-    if (totalMonths === 0) return { left: 0, width: 0 };
+    const totalQuarters = chartData.quarters.length;
+    if (totalQuarters === 0) return { left: 0, width: 0 };
 
-    const startMonth = chartData.months.findIndex(m => 
-      m.year === project.startDate.getFullYear() && 
-      m.month === project.startDate.getMonth()
-    );
-    const endMonth = chartData.months.findIndex(m => 
-      m.year === project.endDate.getFullYear() && 
-      m.month === project.endDate.getMonth()
-    );
+    const startIndex = getQuarterIndex(project.year, project.startQuarter);
+    const endIndex = getQuarterIndex(project.year, project.endQuarter);
 
-    const left = (startMonth * 100) / totalMonths;
-    const width = ((endMonth - startMonth + 1) * 100) / totalMonths;
+    if (startIndex === -1 || endIndex === -1) return { left: 0, width: 0 };
+
+    const left = (startIndex * 100) / totalQuarters;
+    const width = ((endIndex - startIndex + 1) * 100) / totalQuarters;
 
     return { left, width };
   };
@@ -62,13 +59,29 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
     return 'bg-gray-400';
   };
 
+  // Get all projects including subprojects for the chart
+  const allProjects = useMemo(() => {
+    const result: Project[] = [];
+    
+    projects.filter(p => !p.isSubProject).forEach(project => {
+      result.push(project);
+      if (project.subProjects) {
+        result.push(...project.subProjects);
+      }
+    });
+    
+    return result;
+  }, [projects]);
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Gantt Chart {chartData.yearRange && `(${chartData.yearRange})`}</CardTitle>
+        <CardTitle>
+          Gantt Chart {chartData.years.length > 0 && `(${chartData.years.join(', ')})`}
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        {projects.length === 0 ? (
+        {allProjects.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             Projeler eklendikçe Gantt chart burada görünecek
           </div>
@@ -79,12 +92,12 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
               <div className="w-48 font-medium">Proje</div>
               <div className="flex-1 relative">
                 <div className="flex">
-                  {chartData.months.map((month, index) => (
+                  {chartData.quarters.map((quarter, index) => (
                     <div 
-                      key={`${month.year}-${month.month}`}
+                      key={`${quarter.year}-${quarter.quarter}`}
                       className="flex-1 text-xs text-center border-l border-gray-200 px-1"
                     >
-                      {month.name}
+                      {quarter.label}
                     </div>
                   ))}
                 </div>
@@ -92,12 +105,15 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
             </div>
 
             {/* Project rows */}
-            {projects.map((project) => {
+            {allProjects.map((project) => {
               const position = getProjectPosition(project);
               return (
                 <div key={project.id} className="flex items-center py-2 hover:bg-gray-50">
                   <div className="w-48 pr-4">
-                    <div className="font-medium text-sm">{project.name}</div>
+                    <div className={`font-medium text-sm ${project.isSubProject ? 'pl-4 text-gray-600' : ''}`}>
+                      {project.isSubProject && '└ '}
+                      {project.name}
+                    </div>
                     <div className="text-xs text-muted-foreground">
                       %{project.completionPercentage}
                     </div>

@@ -11,12 +11,16 @@ import { convertRoadmapData } from '@/utils/dataImport';
 export interface Project {
   id: string;
   name: string;
-  startDate: Date;
-  endDate: Date;
+  startQuarter: string; // Q1, Q2, Q3, Q4
+  endQuarter: string;
+  year: number;
   completionPercentage: number;
   category: string;
   responsible: string;
   status: 'not-started' | 'in-progress' | 'completed' | 'delayed';
+  subProjects?: Project[]; // Alt projeler
+  isSubProject?: boolean; // Alt proje mi?
+  parentId?: string; // Ana proje ID'si
 }
 
 const Roadmap = () => {
@@ -52,6 +56,26 @@ const Roadmap = () => {
 
   const handleDeleteProject = (projectId: string) => {
     setProjects(projects.filter(p => p.id !== projectId));
+  };
+
+  const handleAddSubProject = (parentId: string, subProject: Omit<Project, 'id'>) => {
+    const newSubProject: Project = {
+      ...subProject,
+      id: Date.now().toString(),
+      isSubProject: true,
+      parentId: parentId,
+    };
+
+    setProjects(prevProjects => 
+      prevProjects.map(project => 
+        project.id === parentId 
+          ? {
+              ...project,
+              subProjects: [...(project.subProjects || []), newSubProject]
+            }
+          : project
+      )
+    );
   };
 
   const handleLoadSampleData = () => {
@@ -104,6 +128,7 @@ const Roadmap = () => {
             projects={projects}
             onEdit={handleEditProject}
             onDelete={handleDeleteProject}
+            onAddSubProject={handleAddSubProject}
           />
         </div>
         <div className="lg:col-span-2">
