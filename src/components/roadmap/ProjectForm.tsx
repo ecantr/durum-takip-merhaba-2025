@@ -23,7 +23,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
     completionPercentage: 0,
     category: '',
     responsible: '',
-    status: 'not-started' as 'not-started' | 'in-progress' | 'completed' | 'delayed',
+    status: 'not-started' as 'not-started' | 'in-progress' | 'completed' | 'delayed' | 'continuous',
   });
 
   useEffect(() => {
@@ -180,7 +180,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
 
       <div>
         <Label htmlFor="status">Durum</Label>
-        <Select value={formData.status} onValueChange={(value: 'not-started' | 'in-progress' | 'completed' | 'delayed') => setFormData({ ...formData, status: value })}>
+        <Select value={formData.status} onValueChange={(value: 'not-started' | 'in-progress' | 'completed' | 'delayed' | 'continuous') => setFormData({ ...formData, status: value })}>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
@@ -189,6 +189,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
             <SelectItem value="in-progress">Devam Ediyor</SelectItem>
             <SelectItem value="completed">Tamamlandı</SelectItem>
             <SelectItem value="delayed">Gecikmiş</SelectItem>
+            <SelectItem value="continuous">Sürekli</SelectItem>
           </SelectContent>
         </Select>
       </div>

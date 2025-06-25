@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,7 +19,7 @@ export interface Project {
   completionPercentage: number;
   category: string;
   responsible: string;
-  status: 'not-started' | 'in-progress' | 'completed' | 'delayed';
+  status: 'not-started' | 'in-progress' | 'completed' | 'delayed' | 'continuous';
   subProjects?: Project[]; // Alt projeler
   isSubProject?: boolean; // Alt proje mi?
   parentId?: string; // Ana proje ID'si
