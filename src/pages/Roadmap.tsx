@@ -126,17 +126,15 @@ const Roadmap = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-1">
-          <div className="space-y-4">
-            <ProjectPhaseInfo />
-            <ProjectList
-              projects={projects}
-              onEdit={handleEditProject}
-              onDelete={handleDeleteProject}
-              onAddSubProject={handleAddSubProject}
-            />
-          </div>
+          <ProjectList
+            projects={projects}
+            onEdit={handleEditProject}
+            onDelete={handleDeleteProject}
+            onAddSubProject={handleAddSubProject}
+          />
         </div>
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-3 space-y-4">
+          <ProjectPhaseInfo />
           <GanttChart projects={projects} />
         </div>
       </div>
