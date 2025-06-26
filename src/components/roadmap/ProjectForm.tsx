@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -55,6 +56,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
     { value: 'Q4-2025', label: '2025 Q4 (Ekim-Aralık)' },
   ];
 
+  const isContinuousProject = formData.status === 'continuous';
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -94,86 +97,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
             max="100"
             value={formData.completionPercentage}
             onChange={(e) => setFormData({ ...formData, completionPercentage: parseInt(e.target.value) || 0 })}
+            disabled={isContinuousProject}
           />
-        </div>
-      </div>
-
-      {/* Tarih Seçimleri */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-800">Tarih Bilgileri</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="plannedStartQuarter">Planlanan Başlangıç Tarihi</Label>
-            <Select 
-              value={formData.plannedStartQuarter} 
-              onValueChange={(value) => setFormData({ ...formData, plannedStartQuarter: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {dateOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="plannedEndQuarter">Planlanan Bitiş Tarihi</Label>
-            <Select 
-              value={formData.plannedEndQuarter} 
-              onValueChange={(value) => setFormData({ ...formData, plannedEndQuarter: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {dateOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="actualStartQuarter">Gerçekleşen Başlangıç Tarihi</Label>
-            <Select 
-              value={formData.actualStartQuarter} 
-              onValueChange={(value) => setFormData({ ...formData, actualStartQuarter: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {dateOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="actualEndQuarter">Gerçekleşen Bitiş Tarihi</Label>
-            <Select 
-              value={formData.actualEndQuarter} 
-              onValueChange={(value) => setFormData({ ...formData, actualEndQuarter: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {dateOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
         </div>
       </div>
 
@@ -192,6 +117,95 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
           </SelectContent>
         </Select>
       </div>
+
+      {/* Tarih Seçimleri - Sürekli projeler için gizle */}
+      {!isContinuousProject && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-800">Tarih Bilgileri</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="plannedStartQuarter">Planlanan Başlangıç Tarihi</Label>
+              <Select 
+                value={formData.plannedStartQuarter} 
+                onValueChange={(value) => setFormData({ ...formData, plannedStartQuarter: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {dateOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="plannedEndQuarter">Planlanan Bitiş Tarihi</Label>
+              <Select 
+                value={formData.plannedEndQuarter} 
+                onValueChange={(value) => setFormData({ ...formData, plannedEndQuarter: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {dateOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="actualStartQuarter">Gerçekleşen Başlangıç Tarihi</Label>
+              <Select 
+                value={formData.actualStartQuarter} 
+                onValueChange={(value) => setFormData({ ...formData, actualStartQuarter: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {dateOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="actualEndQuarter">Gerçekleşen Bitiş Tarihi</Label>
+              <Select 
+                value={formData.actualEndQuarter} 
+                onValueChange={(value) => setFormData({ ...formData, actualEndQuarter: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {dateOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isContinuousProject && (
+        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+          <p className="text-purple-800 text-sm">
+            <strong>Sürekli Proje:</strong> Bu proje türü için tarih seçimi yapılmaz. Gantt chart'ta tüm zaman dilimini kaplar.
+          </p>
+        </div>
+      )}
       
       <div className="flex gap-2 justify-end">
         <Button type="button" variant="outline" onClick={onCancel}>

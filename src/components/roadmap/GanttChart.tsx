@@ -1,7 +1,6 @@
-
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Project } from '@/pages/Roadmap';
+import { Project } from '@/services/projectService';
 import { getPhaseColor } from '@/utils/projectPhases';
 
 interface GanttChartProps {
@@ -30,6 +29,11 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
     const totalPeriods = chartData.timeperiods.length;
     if (totalPeriods === 0) return { left: 0, width: 0 };
 
+    // Sürekli projeler için tüm zaman dilimini kapla
+    if (project.status === 'continuous') {
+      return { left: 0, width: 100 };
+    }
+
     const startIndex = getTimePeriodIndex(project.plannedStartQuarter);
     const endIndex = getTimePeriodIndex(project.plannedEndQuarter);
 
@@ -45,6 +49,11 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
     const totalPeriods = chartData.timeperiods.length;
     if (totalPeriods === 0) return { left: 0, width: 0 };
 
+    // Sürekli projeler için tüm zaman dilimini kapla
+    if (project.status === 'continuous') {
+      return { left: 0, width: 100 };
+    }
+
     const startIndex = getTimePeriodIndex(project.actualStartQuarter);
     const endIndex = getTimePeriodIndex(project.actualEndQuarter);
 
@@ -59,6 +68,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
   const getStatusColor = (status: string, completion: number) => {
     if (completion === 100) return 'bg-green-500';
     if (status === 'delayed') return 'bg-red-500';
+    if (status === 'continuous') return 'bg-purple-500';
     
     // Proje fazına göre renk belirleme
     return getPhaseColor(completion);
@@ -68,6 +78,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
     // Daha iyi görünürlük için koyu renk kullan
     if (completion === 100) return 'text-white';
     if (status === 'delayed') return 'text-white';
+    if (status === 'continuous') return 'text-white';
     return 'text-gray-800';
   };
 
@@ -151,47 +162,65 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
                       </span>
                     </div>
                     <div className={`text-xs text-muted-foreground ${project.isSubProject ? 'ml-12' : ''}`}>
-                      %{project.completionPercentage}
+                      {project.status === 'continuous' ? 'Sürekli' : `%${project.completionPercentage}`}
                     </div>
                   </div>
                   <div className="flex-1 relative h-12">
-                    {/* Planned timeline (lighter background) */}
-                    <div 
-                      className="absolute h-4 rounded bg-gray-300 opacity-60 top-0 flex items-center justify-center"
-                      style={{
-                        left: `${plannedPosition.left}%`,
-                        width: `${plannedPosition.width}%`,
-                      }}
-                      title={`Plan: ${project.plannedStartQuarter} - ${project.plannedEndQuarter}`}
-                    >
-                      <span className="text-gray-700 text-xs font-medium">
-                        {formatPlannedPeriod(project.plannedStartQuarter, project.plannedEndQuarter)}
-                      </span>
-                    </div>
-                    
-                    {/* Actual timeline */}
-                    <div 
-                      className={`absolute h-4 rounded ${getStatusColor(project.status, project.completionPercentage)} opacity-90 flex items-center justify-center top-6`}
-                      style={{
-                        left: `${actualPosition.left}%`,
-                        width: `${actualPosition.width}%`,
-                      }}
-                      title={`Gerçek: ${project.actualStartQuarter} - ${project.actualEndQuarter}`}
-                    >
-                      <span className={`text-xs font-bold ${getTextColor(project.status, project.completionPercentage)}`}>
-                        %{project.completionPercentage}
-                      </span>
-                    </div>
-                    
-                    {/* Progress overlay */}
-                    {project.completionPercentage > 0 && project.completionPercentage < 100 && (
+                    {/* Sürekli projeler için sadece tek çubuk göster */}
+                    {project.status === 'continuous' ? (
                       <div 
-                        className="absolute h-4 rounded bg-green-600 opacity-70 top-6"
+                        className={`absolute h-8 rounded ${getStatusColor(project.status, project.completionPercentage)} opacity-90 flex items-center justify-center top-2`}
                         style={{
                           left: `${actualPosition.left}%`,
-                          width: `${(actualPosition.width * project.completionPercentage) / 100}%`,
+                          width: `${actualPosition.width}%`,
                         }}
-                      />
+                        title="Sürekli proje"
+                      >
+                        <span className={`text-xs font-bold ${getTextColor(project.status, project.completionPercentage)}`}>
+                          Sürekli
+                        </span>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Planned timeline (lighter background) */}
+                        <div 
+                          className="absolute h-4 rounded bg-gray-300 opacity-60 top-0 flex items-center justify-center"
+                          style={{
+                            left: `${plannedPosition.left}%`,
+                            width: `${plannedPosition.width}%`,
+                          }}
+                          title={`Plan: ${project.plannedStartQuarter} - ${project.plannedEndQuarter}`}
+                        >
+                          <span className="text-gray-700 text-xs font-medium">
+                            {formatPlannedPeriod(project.plannedStartQuarter, project.plannedEndQuarter)}
+                          </span>
+                        </div>
+                        
+                        {/* Actual timeline */}
+                        <div 
+                          className={`absolute h-4 rounded ${getStatusColor(project.status, project.completionPercentage)} opacity-90 flex items-center justify-center top-6`}
+                          style={{
+                            left: `${actualPosition.left}%`,
+                            width: `${actualPosition.width}%`,
+                          }}
+                          title={`Gerçek: ${project.actualStartQuarter} - ${project.actualEndQuarter}`}
+                        >
+                          <span className={`text-xs font-bold ${getTextColor(project.status, project.completionPercentage)}`}>
+                            %{project.completionPercentage}
+                          </span>
+                        </div>
+                        
+                        {/* Progress overlay */}
+                        {project.completionPercentage > 0 && project.completionPercentage < 100 && (
+                          <div 
+                            className="absolute h-4 rounded bg-green-600 opacity-70 top-6"
+                            style={{
+                              left: `${actualPosition.left}%`,
+                              width: `${(actualPosition.width * project.completionPercentage) / 100}%`,
+                            }}
+                          />
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
