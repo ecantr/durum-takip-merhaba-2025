@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
@@ -46,7 +45,6 @@ const ProjectDelayChart: React.FC<ProjectDelayChartProps> = ({ projects }) => {
         completion: project.completionPercentage
       };
     })
-    .filter(item => item['Başlangıç Sarkması'] !== 0 || item['Bitiş Sarkması'] !== 0) // Sadece gecikme/erken bitirme olan projeleri göster
     .sort((a, b) => Math.abs(b['Bitiş Sarkması']) - Math.abs(a['Bitiş Sarkması'])); // En çok sarkan projeler önce
 
   const chartConfig = {
@@ -102,14 +100,6 @@ const ProjectDelayChart: React.FC<ProjectDelayChartProps> = ({ projects }) => {
     return (
       <div className="text-center py-8 text-gray-500">
         Henüz analiz edilecek proje bulunmuyor.
-      </div>
-    );
-  }
-
-  if (chartData.length === 0) {
-    return (
-      <div className="text-center py-8 text-gray-500">
-        Gecikme veya erken bitirme olan proje bulunmuyor. Tüm projeler zamanında tamamlanmış.
       </div>
     );
   }
