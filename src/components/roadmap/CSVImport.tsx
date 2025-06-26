@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Upload, Download, AlertCircle, CheckCircle } from 'lucide-react';
 import { parseCSVData, ImportResult } from '@/utils/csvImport';
-import { Project } from '@/pages/Roadmap';
+import { Project } from '@/services/projectService';
 
 interface CSVImportProps {
   onImport: (projects: Project[]) => void;
