@@ -49,7 +49,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
   };
 
   const dateOptions = [
-    { value: '', label: 'Seçilmedi' },
     { value: '2024', label: '2024' },
     { value: 'Q1-2025', label: '2025 Q1 (Ocak-Mart)' },
     { value: 'Q2-2025', label: '2025 Q2 (Nisan-Haziran)' },
@@ -127,8 +126,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
             <div>
               <Label htmlFor="plannedStartQuarter">Planlanan Başlangıç Tarihi (İsteğe Bağlı)</Label>
               <Select 
-                value={formData.plannedStartQuarter} 
-                onValueChange={(value) => setFormData({ ...formData, plannedStartQuarter: value })}
+                value={formData.plannedStartQuarter || undefined} 
+                onValueChange={(value) => setFormData({ ...formData, plannedStartQuarter: value || '' })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Seçilmedi" />
@@ -145,8 +144,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
             <div>
               <Label htmlFor="plannedEndQuarter">Planlanan Bitiş Tarihi (İsteğe Bağlı)</Label>
               <Select 
-                value={formData.plannedEndQuarter} 
-                onValueChange={(value) => setFormData({ ...formData, plannedEndQuarter: value })}
+                value={formData.plannedEndQuarter || undefined} 
+                onValueChange={(value) => setFormData({ ...formData, plannedEndQuarter: value || '' })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Seçilmedi" />
@@ -170,7 +169,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {dateOptions.filter(option => option.value !== '').map((option) => (
+                  {dateOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
@@ -188,7 +187,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {dateOptions.filter(option => option.value !== '').map((option) => (
+                  {dateOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
