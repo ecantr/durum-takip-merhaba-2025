@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -65,6 +64,7 @@ const Roadmap = () => {
   };
 
   const handleEditProject = (project: Project) => {
+    console.log('Düzenleme için seçilen proje:', project);
     setEditingProject(project);
     setShowForm(true);
   };
@@ -73,9 +73,13 @@ const Roadmap = () => {
     if (!editingProject) return;
 
     try {
-      console.log('Proje güncelleniyor:', editingProject.id);
+      console.log('Proje güncelleniyor:', editingProject.id, updatedProject);
       const updated = await projectService.updateProject(editingProject.id, updatedProject);
-      setProjects(prev => prev.map(p => p.id === editingProject.id ? updated : p));
+      console.log('Güncellenmiş proje:', updated);
+      
+      // Alt projeleri yeniden yükle
+      await loadProjects();
+      
       setEditingProject(null);
       setShowForm(false);
       toast({
