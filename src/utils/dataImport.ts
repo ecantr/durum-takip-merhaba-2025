@@ -1,7 +1,6 @@
+import { Project } from '@/services/projectService';
 
-import { Project } from '@/pages/Roadmap';
-
-// Verilen veriyi Project formatına dönüştürür
+// Sample roadmap data for testing
 export const convertRoadmapData = (): Project[] => {
   const roadmapData = [
     {

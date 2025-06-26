@@ -1,5 +1,5 @@
-
-import { Project } from '@/pages/Roadmap';
+import Papa from 'papaparse';
+import { Project } from '@/services/projectService';
 
 export interface ImportResult {
   success: boolean;

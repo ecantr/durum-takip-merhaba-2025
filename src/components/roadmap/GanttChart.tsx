@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Project } from '@/services/projectService';
@@ -34,10 +35,15 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
       return { left: 0, width: 100 };
     }
 
+    // Planlanan tarihler yoksa null döndür
+    if (!project.plannedStartQuarter || !project.plannedEndQuarter) {
+      return null;
+    }
+
     const startIndex = getTimePeriodIndex(project.plannedStartQuarter);
     const endIndex = getTimePeriodIndex(project.plannedEndQuarter);
 
-    if (startIndex === -1 || endIndex === -1) return { left: 0, width: 0 };
+    if (startIndex === -1 || endIndex === -1) return null;
 
     const left = (startIndex * 100) / totalPeriods;
     const width = ((endIndex - startIndex + 1) * 100) / totalPeriods;
@@ -147,6 +153,8 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
             {allProjects.map((project) => {
               const plannedPosition = getProjectPosition(project);
               const actualPosition = getActualProjectPosition(project);
+              const hasPlannedDates = plannedPosition !== null;
+              
               return (
                 <div key={project.id} className="flex items-center py-2 hover:bg-gray-50">
                   <div className="w-48 pr-4">
@@ -182,23 +190,25 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
                       </div>
                     ) : (
                       <>
-                        {/* Planned timeline (lighter background) */}
-                        <div 
-                          className="absolute h-4 rounded bg-gray-300 opacity-60 top-0 flex items-center justify-center"
-                          style={{
-                            left: `${plannedPosition.left}%`,
-                            width: `${plannedPosition.width}%`,
-                          }}
-                          title={`Plan: ${project.plannedStartQuarter} - ${project.plannedEndQuarter}`}
-                        >
-                          <span className="text-gray-700 text-xs font-medium">
-                            {formatPlannedPeriod(project.plannedStartQuarter, project.plannedEndQuarter)}
-                          </span>
-                        </div>
+                        {/* Planned timeline (sadece planlanan tarihler varsa göster) */}
+                        {hasPlannedDates && plannedPosition && (
+                          <div 
+                            className="absolute h-4 rounded bg-gray-300 opacity-60 top-0 flex items-center justify-center"
+                            style={{
+                              left: `${plannedPosition.left}%`,
+                              width: `${plannedPosition.width}%`,
+                            }}
+                            title={`Plan: ${project.plannedStartQuarter} - ${project.plannedEndQuarter}`}
+                          >
+                            <span className="text-gray-700 text-xs font-medium">
+                              {formatPlannedPeriod(project.plannedStartQuarter!, project.plannedEndQuarter!)}
+                            </span>
+                          </div>
+                        )}
                         
-                        {/* Actual timeline */}
+                        {/* Actual timeline - planlanan tarih yoksa ortada göster */}
                         <div 
-                          className={`absolute h-4 rounded ${getStatusColor(project.status, project.completionPercentage)} opacity-90 flex items-center justify-center top-6`}
+                          className={`absolute h-4 rounded ${getStatusColor(project.status, project.completionPercentage)} opacity-90 flex items-center justify-center ${hasPlannedDates ? 'top-6' : 'top-4'}`}
                           style={{
                             left: `${actualPosition.left}%`,
                             width: `${actualPosition.width}%`,
@@ -213,7 +223,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ projects }) => {
                         {/* Progress overlay */}
                         {project.completionPercentage > 0 && project.completionPercentage < 100 && (
                           <div 
-                            className="absolute h-4 rounded bg-green-600 opacity-70 top-6"
+                            className={`absolute h-4 rounded bg-green-600 opacity-70 ${hasPlannedDates ? 'top-6' : 'top-4'}`}
                             style={{
                               left: `${actualPosition.left}%`,
                               width: `${(actualPosition.width * project.completionPercentage) / 100}%`,

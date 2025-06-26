@@ -15,11 +15,11 @@ interface ProjectFormProps {
 const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
     name: '',
-    plannedStartQuarter: '2024',
-    plannedEndQuarter: 'Q1-2025',
+    plannedStartQuarter: '',
+    plannedEndQuarter: '',
     actualStartQuarter: '2024',
     actualEndQuarter: 'Q1-2025',
-    year: 2025, // Sabit değer olarak tutuyoruz
+    year: 2025,
     completionPercentage: 0,
     category: '',
     responsible: '',
@@ -30,8 +30,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
     if (project) {
       setFormData({
         name: project.name,
-        plannedStartQuarter: project.plannedStartQuarter,
-        plannedEndQuarter: project.plannedEndQuarter,
+        plannedStartQuarter: project.plannedStartQuarter || '',
+        plannedEndQuarter: project.plannedEndQuarter || '',
         actualStartQuarter: project.actualStartQuarter,
         actualEndQuarter: project.actualEndQuarter,
         year: project.year,
@@ -49,6 +49,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
   };
 
   const dateOptions = [
+    { value: '', label: 'Seçilmedi' },
     { value: '2024', label: '2024' },
     { value: 'Q1-2025', label: '2025 Q1 (Ocak-Mart)' },
     { value: 'Q2-2025', label: '2025 Q2 (Nisan-Haziran)' },
@@ -124,13 +125,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
           <h3 className="text-lg font-semibold text-gray-800">Tarih Bilgileri</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="plannedStartQuarter">Planlanan Başlangıç Tarihi</Label>
+              <Label htmlFor="plannedStartQuarter">Planlanan Başlangıç Tarihi (İsteğe Bağlı)</Label>
               <Select 
                 value={formData.plannedStartQuarter} 
                 onValueChange={(value) => setFormData({ ...formData, plannedStartQuarter: value })}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Seçilmedi" />
                 </SelectTrigger>
                 <SelectContent>
                   {dateOptions.map((option) => (
@@ -142,13 +143,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
               </Select>
             </div>
             <div>
-              <Label htmlFor="plannedEndQuarter">Planlanan Bitiş Tarihi</Label>
+              <Label htmlFor="plannedEndQuarter">Planlanan Bitiş Tarihi (İsteğe Bağlı)</Label>
               <Select 
                 value={formData.plannedEndQuarter} 
                 onValueChange={(value) => setFormData({ ...formData, plannedEndQuarter: value })}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Seçilmedi" />
                 </SelectTrigger>
                 <SelectContent>
                   {dateOptions.map((option) => (
@@ -169,7 +170,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {dateOptions.map((option) => (
+                  {dateOptions.filter(option => option.value !== '').map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
@@ -187,7 +188,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {dateOptions.map((option) => (
+                  {dateOptions.filter(option => option.value !== '').map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
