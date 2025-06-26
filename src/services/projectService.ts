@@ -23,6 +23,7 @@ export interface Project {
   subProjects?: Project[];
   isSubProject?: boolean;
   parentId?: string;
+  sortOrder?: number;
 }
 
 // Veritabanı verilerini uygulama formatına dönüştür
@@ -41,6 +42,7 @@ function mapDatabaseToProject(dbProject: DatabaseProject): Project {
     status: dbProject.status as Project['status'],
     isSubProject: dbProject.is_sub_project || false,
     parentId: dbProject.parent_id || undefined,
+    sortOrder: dbProject.sort_order || 0,
   };
 }
 
@@ -59,16 +61,17 @@ function mapProjectToDatabase(project: Omit<Project, 'id'>): DatabaseProjectInse
     status: project.status,
     is_sub_project: project.isSubProject || false,
     parent_id: project.parentId || null,
+    sort_order: project.sortOrder || 0,
   };
 }
 
 export const projectService = {
-  // Tüm projeleri getir
+  // Tüm projeleri getir (sıralama ile)
   async getAllProjects(): Promise<Project[]> {
     const { data, error } = await supabase
       .from('projects')
       .select('*')
-      .order('created_at', { ascending: true });
+      .order('sort_order', { ascending: true });
 
     if (error) {
       console.error('Projeler getirilirken hata:', error);
@@ -92,10 +95,12 @@ export const projectService = {
       }
     });
 
-    // Alt projeleri ana projelere ekle
+    // Alt projeleri ana projelere ekle ve sırala
     projects.forEach(project => {
       if (subProjectsMap.has(project.id)) {
-        project.subProjects = subProjectsMap.get(project.id);
+        const subProjects = subProjectsMap.get(project.id)!;
+        subProjects.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+        project.subProjects = subProjects;
       }
     });
 
@@ -104,7 +109,35 @@ export const projectService = {
 
   // Yeni proje ekle
   async createProject(project: Omit<Project, 'id'>): Promise<Project> {
-    const dbProject = mapProjectToDatabase(project);
+    // Yeni proje için son sıra numarasını al
+    const isSubProject = project.isSubProject || false;
+    let maxSortOrder = 0;
+
+    if (isSubProject && project.parentId) {
+      // Alt proje ise, aynı parent_id'ye sahip projeler arasında max sort_order'ı bul
+      const { data: siblingProjects } = await supabase
+        .from('projects')
+        .select('sort_order')
+        .eq('parent_id', project.parentId)
+        .eq('is_sub_project', true);
+      
+      maxSortOrder = siblingProjects?.reduce((max, p) => Math.max(max, p.sort_order || 0), 0) || 0;
+    } else {
+      // Ana proje ise, tüm ana projeler arasında max sort_order'ı bul
+      const { data: mainProjects } = await supabase
+        .from('projects')
+        .select('sort_order')
+        .or('is_sub_project.is.null,is_sub_project.eq.false');
+      
+      maxSortOrder = mainProjects?.reduce((max, p) => Math.max(max, p.sort_order || 0), 0) || 0;
+    }
+
+    const projectWithSortOrder = {
+      ...project,
+      sortOrder: maxSortOrder + 1
+    };
+
+    const dbProject = mapProjectToDatabase(projectWithSortOrder);
     
     const { data, error } = await supabase
       .from('projects')
@@ -136,6 +169,7 @@ export const projectService = {
     if (updates.status !== undefined) dbUpdates.status = updates.status;
     if (updates.isSubProject !== undefined) dbUpdates.is_sub_project = updates.isSubProject;
     if (updates.parentId !== undefined) dbUpdates.parent_id = updates.parentId || null;
+    if (updates.sortOrder !== undefined) dbUpdates.sort_order = updates.sortOrder;
 
     const { data, error } = await supabase
       .from('projects')
@@ -180,5 +214,30 @@ export const projectService = {
     }
 
     return data.map(mapDatabaseToProject);
+  },
+
+  // Projeleri yeniden sırala
+  async reorderProjects(projectIds: string[], isSubProject: boolean = false, parentId?: string): Promise<void> {
+    console.log('Projeler yeniden sıralanıyor:', { projectIds, isSubProject, parentId });
+    
+    // Her proje için yeni sort_order değerini güncelle
+    const updates = projectIds.map((id, index) => ({
+      id,
+      sort_order: index + 1
+    }));
+
+    for (const update of updates) {
+      const { error } = await supabase
+        .from('projects')
+        .update({ sort_order: update.sort_order })
+        .eq('id', update.id);
+
+      if (error) {
+        console.error('Proje sıralaması güncellenirken hata:', error);
+        throw error;
+      }
+    }
+
+    console.log('Proje sıralaması başarıyla güncellendi');
   }
 };

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Plus, Upload, Trash2 } from 'lucide-react';
 import ProjectForm from '@/components/roadmap/ProjectForm';
 import GanttChart from '@/components/roadmap/GanttChart';
-import ProjectList from '@/components/roadmap/ProjectList';
+import DraggableProjectList from '@/components/roadmap/DraggableProjectList';
 import ProjectPhaseInfo from '@/components/roadmap/ProjectPhaseInfo';
 import { convertRoadmapData } from '@/utils/dataImport';
 import { useToast } from '@/hooks/use-toast';
@@ -138,6 +138,28 @@ const Roadmap = () => {
       toast({
         title: "Hata",
         description: "Alt proje eklenirken bir hata oluştu",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleReorderProjects = async (projectIds: string[], isSubProject: boolean = false, parentId?: string) => {
+    try {
+      console.log('Projeler yeniden sıralanıyor:', { projectIds, isSubProject, parentId });
+      await projectService.reorderProjects(projectIds, isSubProject, parentId);
+      
+      // Projeleri yeniden yükle
+      await loadProjects();
+      
+      toast({
+        title: "Başarılı",
+        description: "Proje sıralaması güncellendi",
+      });
+    } catch (error) {
+      console.error('Proje sıralaması güncellenirken hata:', error);
+      toast({
+        title: "Hata",
+        description: "Proje sıralaması güncellenirken bir hata oluştu",
         variant: "destructive",
       });
     }
@@ -291,11 +313,12 @@ const Roadmap = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-1">
-            <ProjectList
+            <DraggableProjectList
               projects={projects}
               onEdit={handleEditProject}
               onDelete={handleDeleteProject}
               onAddSubProject={handleAddSubProject}
+              onReorderProjects={handleReorderProjects}
             />
           </div>
           <div className="lg:col-span-3">

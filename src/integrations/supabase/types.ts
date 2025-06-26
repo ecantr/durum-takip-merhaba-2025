@@ -23,6 +23,7 @@ export type Database = {
           planned_end_quarter: string
           planned_start_quarter: string
           responsible: string | null
+          sort_order: number | null
           status: string
           updated_at: string | null
           year: number
@@ -40,6 +41,7 @@ export type Database = {
           planned_end_quarter: string
           planned_start_quarter: string
           responsible?: string | null
+          sort_order?: number | null
           status?: string
           updated_at?: string | null
           year?: number
@@ -57,6 +59,7 @@ export type Database = {
           planned_end_quarter?: string
           planned_start_quarter?: string
           responsible?: string | null
+          sort_order?: number | null
           status?: string
           updated_at?: string | null
           year?: number
