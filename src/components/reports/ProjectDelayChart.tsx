@@ -15,8 +15,15 @@ const ProjectDelayChart: React.FC<ProjectDelayChartProps> = ({ projects }) => {
   };
 
   const calculateDelay = (planned: string, actual: string): number => {
+    // Eğer planlanmış ve gerçekleşen aynıysa gecikme yok
+    if (planned === actual) return 0;
+    
     const plannedNum = quarterToNumber(planned);
     const actualNum = quarterToNumber(actual);
+    
+    // Eğer değerler geçersizse gecikme hesaplanamaz
+    if (plannedNum === 0 || actualNum === 0) return 0;
+    
     return actualNum - plannedNum;
   };
 
@@ -39,6 +46,7 @@ const ProjectDelayChart: React.FC<ProjectDelayChartProps> = ({ projects }) => {
         completion: project.completionPercentage
       };
     })
+    .filter(item => item['Başlangıç Sarkması'] !== 0 || item['Bitiş Sarkması'] !== 0) // Sadece gecikme/erken bitirme olan projeleri göster
     .sort((a, b) => Math.abs(b['Bitiş Sarkması']) - Math.abs(a['Bitiş Sarkması'])); // En çok sarkan projeler önce
 
   const chartConfig = {
@@ -94,6 +102,14 @@ const ProjectDelayChart: React.FC<ProjectDelayChartProps> = ({ projects }) => {
     return (
       <div className="text-center py-8 text-gray-500">
         Henüz analiz edilecek proje bulunmuyor.
+      </div>
+    );
+  }
+
+  if (chartData.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        Gecikme veya erken bitirme olan proje bulunmuyor. Tüm projeler zamanında tamamlanmış.
       </div>
     );
   }

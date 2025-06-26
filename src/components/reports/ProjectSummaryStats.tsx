@@ -14,8 +14,15 @@ const ProjectSummaryStats: React.FC<ProjectSummaryStatsProps> = ({ projects }) =
   };
 
   const calculateDelay = (planned: string, actual: string): number => {
+    // Eğer planlanmış ve gerçekleşen aynıysa gecikme yok
+    if (planned === actual) return 0;
+    
     const plannedNum = quarterToNumber(planned);
     const actualNum = quarterToNumber(actual);
+    
+    // Eğer değerler geçersizse gecikme hesaplanamaz
+    if (plannedNum === 0 || actualNum === 0) return 0;
+    
     return actualNum - plannedNum;
   };
 
@@ -41,7 +48,10 @@ const ProjectSummaryStats: React.FC<ProjectSummaryStatsProps> = ({ projects }) =
     : 0;
 
   const maxDelay = mainProjects.length > 0 
-    ? Math.max(...mainProjects.map(project => calculateDelay(project.plannedEndQuarter, project.actualEndQuarter)))
+    ? Math.max(...mainProjects.map(project => {
+        const delay = calculateDelay(project.plannedEndQuarter, project.actualEndQuarter);
+        return delay > 0 ? delay : 0;
+      }))
     : 0;
 
   return (
@@ -87,7 +97,7 @@ const ProjectSummaryStats: React.FC<ProjectSummaryStatsProps> = ({ projects }) =
         <CardContent>
           <div className="text-2xl font-bold text-blue-600">%{averageCompletion}</div>
           <p className="text-xs text-muted-foreground">
-            Maks gecikme: {maxDelay} çeyrek
+            {maxDelay > 0 ? `Maks gecikme: ${maxDelay} çeyrek` : 'Gecikme yok'}
           </p>
         </CardContent>
       </Card>
